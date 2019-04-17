@@ -1,0 +1,242 @@
+%!TEX encoding = UTF-8 Unicode
+
+\documentclass{article}
+
+
+\usepackage{arxiv}
+% \usepackage{graphicx}
+% \usepackage[utf8]{inputenc} % allow utf-8 input
+% \usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+% \usepackage{hyperref}       % hyperlinks
+% \usepackage{url}            % simple URL typesetting
+% \usepackage{booktabs}       % professional-quality tables
+% \usepackage{amsfonts}       % blackboard math symbols
+% \usepackage{nicefrac}       % compact symbols for 1/2, etc.
+% \usepackage{microtype}      % microtypography
+% \usepackage{lipsum}
+
+%%% ============================DOCUMENT SET UP=========================
+%	documentclass sets up the type of document
+% \documentclass[a4paper,12pt]{article} % options font size, etc.
+%	inputenc  sets up the input enconding
+	\linespread{1.15}
+%\usepackage[utf8]{inputenc} % utf8, etc.
+%	fontenc	  necessary to encode special characters like ä, ö, ß usw.
+\usepackage[T1]{fontenc}
+%	babel			adds capabilites for working correctly with other languages
+%\usepackage[german]{babel} % not necessary for english
+%	hyphennat	some words are incorrectly hyphenated, for these in textmode,
+						% a special command may be inserted e.g. \hyphenation{so-wieso}
+\usepackage{hyphenat}
+% Use specific fonts only works with xelatex or lulatex
+% \usepackage{fontspec}
+% %\defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+% 	\defaultfontfeatures{Mapping=tex-text}
+% 	\setmainfont[BoldFont = timesbd.ttf,
+% 							 ItalicFont = timesi.ttf,
+% 							 BoldItalicFont = timesbi.ttf]{times.ttf}
+% % Sans Font is normally used for headings. If it's set to times new roman, all is well
+%  	\setsansfont[BoldFont = timesbd.ttf,
+%  							 ItalicFont = timesi.ttf,
+%  							 BoldItalicFont = timesbi.ttf]{times.ttf}
+
+	%\setmainfont[BoldFont = arialbd.ttf,
+	%						 ItalicFont = ariali.ttf,
+	%						 BoldItalicFont = arialbi.ttf]{arial.ttf}
+
+%%  ----------------------------TABLE OF CONTENTS-----------------------
+%	tocbibind	Put the bibliography in the ToC
+% if list of figures should be excluded add notlof for list of tables notlot
+\usepackage[nottoc]{tocbibind}
+% tocloft		Alter the style of the Table of Contents
+						% needs to be before parskip, warning @startoc has changed can
+						% then probably be ignored
+\usepackage[titles]{tocloft} % option subfigure
+	\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+	\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+% create a list of hypotheses
+\usepackage[hyperref]{ntheorem}
+	\theoremstyle{plain}
+	\theoremnumbering{arabic}
+	\theoremindent 5mm
+	\theoremseparator{:}
+	\newtheorem{Hypothesis}{H}
+
+\def\subsectionautorefname{Section}
+\def\subsubsectionautorefname{Section}
+\def\subsubsection
+\def\paragraphautorefname{Section}
+\newcommand*{\Appendixautorefname}{Appendix}
+\def\figureautorefname{Figure}
+\def\tableautorefname{Table}
+
+%%  ----------------------------BIBLIOGRAPHY----------------------------
+% natbib		flexible bibliography (works with citep and citet amon others
+\usepackage[round, semicolon, authoryear]{natbib}
+	\bibliographystyle{humannat} % sets the bibliographystlye
+
+%%  ----------------------------GLOSSARY--------------------------------
+%	glossaries package for using index, acronyms, glossary, symbols, etc.
+
+\usepackage[nopostdot,nonumberlist,acronym,toc,nomain, nogroupskip]{glossaries}
+\usepackage{glossary-superragged}
+\setglossarystyle{superragged}
+\renewcommand{\glsdescwidth}{.75\linewidth}
+%%  ----------------------------APPENDIX--------------------------------
+\usepackage[toc,page]{appendix}
+
+%%% ============================PAGE SETUP==============================
+% geometry	to change the page dimensions
+\usepackage{geometry}
+	\geometry{a4paper}
+ 	\geometry{margin=1in} % for example, change the margins to 2 inches all round
+%	parskip		Activate to begin paragraphs with an empty line rather than an indent
+\usepackage[parfill]{parskip}
+% nowidow   does not allow widowed lines in the output document
+\usepackage[all]{nowidow}
+%	sectsty		changes the appearance of section titles
+\usepackage{sectsty}
+	\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+
+%	topfraction Legt den Anteil des Platzes am oberen Rand einer Seite fest, bis
+% zu dem Gleitobjekte plaziert werden können.
+\renewcommand{\topfraction}{.85}
+
+\def\blankpage{%
+      \clearpage%
+      \thispagestyle{empty}%
+      \addtocounter{page}{-1}%
+      \null%
+      \clearpage}
+%%  ----------------------------HEADERS & FOOTERS-----------------------
+%	fancyheadr This should be set AFTER setting up the page geometry
+\usepackage{fancyhdr}
+	\pagestyle{fancy} % options: empty , plain , fancy
+	\renewcommand{\headrulewidth}{0pt} % customise the layout...
+% footmisc	alter the style of footnotes
+\usepackage[hang,flushmargin]{footmisc} % options hang and flushmargin set
+                                        % remove the indent of footnotes
+
+
+%%% ============================ENVIRONMENTS============================
+%	float     let latex arrange figures and tables
+\usepackage{float}
+%	verbatim	adds environment for commenting out blocks of text & for better verbatim
+	\usepackage{verbatim}
+
+%%  ----------------------------TABLES & LISTS--------------------------
+% tabularx  makes creating tables much easier
+\usepackage{lscape}
+\usepackage{tabularx}
+\usepackage{multirow}
+	% newcolumntype can be used to define colums which can later be used in tables
+	\def\tabularxcolumn#1{m{#1}}
+	\newcolumntype{M}{>{\hsize=.75\hsize\centering}X} % small & centered columns
+	\newcolumntype{I}{>{\hsize=.75\hsize}X} % small & centered columns
+	\newcolumntype{C}{>{\centering\arraybackslash}X}
+	\newcolumntype{S}{>{\hsize=.5\hsize\centering}X} % small & centered columns
+	\newcolumntype{L}{>{\hsize=1.25\hsize\centering\arraybackslash}X} % small & centered columns
+
+% booktabs	for much better looking tables
+\usepackage{booktabs}
+% longtable supports footnotes in tabular environments
+\usepackage{threeparttable}
+% paralist	very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{paralist}
+% grids
+\usepackage{tikz}
+%%  ----------------------------FIGURES---------------------------------
+%	graphicx 	support the \includegraphics command and options
+\usepackage{graphicx}
+%	subcaption	add captions to each subfigure in a figure environment
+\usepackage{subcaption} % not possible to use with subfig
+\usepackage[font=small]{caption}
+\captionsetup[table]{skip=.25\baselineskip, singlelinecheck = false, justification=justified}
+
+%%	----------------------------MATH & CHEMISTRY------------------------
+%	amsmath		numbered euqations which are in equation environments
+\usepackage{amsmath}
+\usepackage{mathtools}
+%	array		for better arrays (eg matrices) in maths
+\usepackage{array}
+%	enable chemistry in mathmode. Formatting is not as nice.
+% \newcommand*\chem[1]{\ensuremath{\mathrm{#1}}}
+% advanced chemistry mode
+\usepackage[version=4]{mhchem}
+
+%%	----------------------------SYMBOLS & FORMATTING--------------------
+%	textgreek	in text greek letters, without activating mathmode
+\usepackage{textgreek}
+%	textcomp	adds symbols in textmode
+\usepackage{textcomp}
+%	amssymb		adds further symbols
+\usepackage{amssymb}  % add further symbols
+%	color		colored texts can be included
+\usepackage{color}
+
+
+\title{Tainter inspired model of survival and collapse of simple hierarchical society networks}
+
+
+\author{
+  Florian Schunck\thanks{} \\
+  MLU Halle \\
+  XYZ, 12345 leipzig \\
+  \texttt{florian@schunck-online.com} \\
+  %
+  % Marc Wiedermann\thanks{}\\
+  % Potsdam Institute for Climate Impact Research \\
+ }
+
+  %% \AND
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+    \input{01_abstract.tex}
+\end{abstract}
+
+
+% keywords can be removed
+\keywords{First keyword \and Second keyword \and More}
+
+
+\section{Introduction}
+\input{../1_content/01_introduction.tex}
+
+\section{Methods}
+\input{../1_content/02_methods.tex}
+
+\section{Results}
+\input{../1_content/03_results.tex}
+
+\section{Discussion}
+\input{../1_content/04_discussion.tex}
+
+\section{Conclusion}
+\input{../1_content/05_conclusion.tex}
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+
+
+
+\end{document}
