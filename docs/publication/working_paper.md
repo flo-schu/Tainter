@@ -6,6 +6,74 @@ In the past twenty years several events disrupted global economics and social we
 
 We were able to illustrate societal collapse as a function of complexity measured in the share of administration in a network. Furthermore, we identified minimum requirements of the administration and the societal network topology to improve wellbeing of the society, estimated in terms of produced energy per capita. Finally we provide a mechanism for improving wellbeing and survival of the modeled society by enabling agents to randomly change between labor and administration, which is effective at very low rates.
 
+## introduction: why Tainter is relevant today
+
+
+collapse is considered in the sociopolitical sphere
+
+a society has collapsed when it displays a rapid significant loss of an established level of sociopolitical complexity. It is manifest in things as:
+- lower degree of stratification and social differentiation
+- less economic and occupational specialization
+- less centralized control
+- less behavioral control and regulation
+- less investment into complexity (architecture, culture)
+- less flow of information
+- less sharing, trading and redistribution of resources
+- less overall coordination and organization
+
+Societies obviously varies in complexity along a continuous scale
+
+It was rather the aim to illustrate a simple mechanism of a many like size of society, distinctiveness of parts, distinct social personalites, specialized roles, mechanisms of organization). Key concepts are inequality and heterogeneity.
+
+Inequality: Unequal access to resources, social participation, power etc.
+heterogeneity: Number of distinct parts of society and how the population is distributed among them
+
+### The study of collapse:
+Main theories of the collapse of soicieties
+on Page 89 of Tainter (1990), all explanations are summarised
+
+#### resource depletion:
+fairly obvious reason for collapse. However in complexer societies one might argue that the centralized body of administration should be capable of taking measures against a depleting resource base. (However - own opinion) looking at contemporary societies, there seem to be problems with this). When a society cannot overcome this, it raises questions towards the society and its organisation itself
+
+#### New resource:
+unrestricted access to power may render government power ineffective thus resulting in class decomposition
+
+#### Major Catastrophe:
+This is a favorite explanation for collapse, however, plenty evidence exists that many societies withstand catastrophes. Of course a catastrophe of the scale of an asteroid may well be critical for collapse
+
+#### Insufficient response to circumstances: (Failure to adapt)
+considered to be a superior theory by tainter. Law of Adaptive Potential. The important bit is to review the characteristics of the society instead of the stresses, which lead to collapse.
+
+Dinosour modeL: Society is mighty and powerful, but grown in such a way that it cannot adapt (no adaptive potential).
+
+Runaway Train: Only one way of action, cannot be reversed and paths cannot be changed. This is basically what we implemented!
+
+House of cards model: complex societies are inherently fragile operating on low margins of reserve.
+
+#### Conflict, contradictions, mismanagement
+mistreatent of lower classes by upper classes as an example. Revolutions as the result (in simple terms)
+
+#### economic explanations
+- decreasing advantages of complexity
+- increasing costs of complexity
+
+#### other theories
+- Other complex Societies
+- Intruders
+- social dysfunction
+- mystical factors
+- concatenation of events
+
+
+
+
+
+
+One may only think of \textit{collapse} when considering sufficiently large and complex societies \citep{tainter1990}
+
+\textquoteleft{Human history as a while has been characterized by a seemingly inexorable trend towards higher levels of complexity, specialization, and sociopolitical control, processing greater quantities of energy and information, formation of ever larger settlements and development of more complex and capable technologies.}
+
+
 ## Model description
 
 
