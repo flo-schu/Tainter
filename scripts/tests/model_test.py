@@ -1,5 +1,8 @@
 import os
-#os.chdir("./Tainter/Models/tf5_cluster")
+import sys
+sys.path.append('../model/')
+
+# os.chdir("./Tainter/Models/tf5_cluster")
 import numpy as np
 import random as random
 import pandas as pd
@@ -9,10 +12,11 @@ import tainter_function_blocks as tblocks
 from tainter_function_5_0 import tf5 as tainter_explore
 import pickle
 import time as time
+plt.rc('image', cmap='inferno')
 
 
 folder = time.strftime("%Y%m%d_%H%M")
-os.mkdir("./results/model/"+folder)
+os.mkdir("../../results/model/"+folder)
 #foldername = input("Foldername")
 again = "y"
 while again == "y":
@@ -96,22 +100,22 @@ while again == "y":
     if runmode == "e":
         data_explore = data.copy()
         dat = pd.DataFrame(data_explore)
-        dat.to_csv("./results/model/"+folder+"/t5_explore.csv")
+        dat.to_csv("../../results/model/"+folder+"/t5_explore.csv")
         print("data saved to exploration")
     elif runmode == "b":
         data_base = data.copy()
         dat = pd.DataFrame(data_base)
-        dat.to_csv("./results/model/"+folder+"/t5_base.csv")
+        dat.to_csv("../../results/model/"+folder+"/t5_base.csv")
         print("data saved to bascase")
     again = input("again? (y/n): ")
 
 
 # save additional data
 hist = pd.DataFrame(history)
-hist.to_csv("./results/model/"+folder+"/history.csv")
-with open("./results/model/"+folder+"/parameters.txt", "w") as text_file:
+hist.to_csv("../../results/model/"+folder+"/history.csv")
+with open("../../results/model/"+folder+"/parameters.txt", "w") as text_file:
     text_file.write(str(args))
-with open("./results/model/"+folder+"/network.pickle","wb") as handle:
+with open("../../results/model/"+folder+"/network.pickle","wb") as handle:
     pickle.dump(G, handle)
 
 print("saved all data!")
@@ -152,4 +156,4 @@ fig.text(0.97, 0.5, 'Energy per capita', ha='center',
     va='center', rotation='vertical')
 fig.text(0.5, 0.04, 'Time', ha='center', va='center')
 plt.show()
-fig.savefig("./results/model/"+folder+"/Admin_Ecap_twocases.png")
+fig.savefig("../../results/model/"+folder+"/Admin_Ecap_twocases.png")
