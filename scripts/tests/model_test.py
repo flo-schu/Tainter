@@ -4,25 +4,36 @@ sys.path.append('../model/')
 
 # os.chdir("./Tainter/Models/tf5_cluster")
 import numpy as np
+import shutil
 import random as random
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib import cm
+import matplotlib as mpl
 import tainter_plots as t_plot
 import tainter_function_blocks as tblocks
 from tainter_function_5_0 import tf5 as tainter_explore
 import pickle
 import time as time
-plt.rc('image', cmap='inferno')
 
-
+specs = [[0,1500,"b","y"],[0.02,1500,"e","n"]]
+iter = 0
 folder = time.strftime("%Y%m%d_%H%M")
-os.mkdir("../../results/model/"+folder)
+if os.path.isdir("../../results/model/"+folder):
+    if input("dir exists. overwrite? (y/n) ") == "y":
+        shutil.rmtree("../../results/model/"+folder)
+        os.mkdir("../../results/model/"+folder)
+else:
+    os.mkdir("../../results/model/"+folder)
+
+
 #foldername = input("Foldername")
 again = "y"
 while again == "y":
-    random.seed(1)
-    np.random.seed(1)
-    expl = float(input("set exploration [0,1]"))
+    random.seed(2)
+    np.random.seed(2)
+    # expl = float(input("set exploration [0,1]"))
+    expl = specs[iter][0]
     N = 400
     history, t, args, fct, merun, wb, G = tainter_explore(
                               network = "erdos" , # with erdos reny networks it is possible that some nodes are not linked and the model runs for ever
@@ -41,13 +52,14 @@ while again == "y":
                               shock = ["on","beta",[1,15]],
                               tmax = 10000,
                               threshold =1.0 ,
-                              eff = 1.0 ,
-                              death_energy_level = 0.25,
+                              eff = 1.05 ,
+                              death_energy_level = 0.0,
                               print_every = None)
 
     print(t+1, wb, merun)
 
-    plot_time = int(input("plot time (steps):"))
+    # plot_time = int(input("plot time (steps):"))
+    plot_time = specs[iter][1]
     history_b = history.copy()
     if plot_time > 0:
         history = {key: value[0:plot_time] for key, value in history_b.items()}
@@ -96,7 +108,8 @@ while again == "y":
             'Access': np.array(history['access'])}
 
 
-    runmode = input("save data as explore (e) or basecase (b)?")
+    # runmode = input("save data as explore (e) or basecase (b)?")
+    runmode = specs[iter][2]
     if runmode == "e":
         data_explore = data.copy()
         dat = pd.DataFrame(data_explore)
@@ -107,7 +120,10 @@ while again == "y":
         dat = pd.DataFrame(data_base)
         dat.to_csv("../../results/model/"+folder+"/t5_base.csv")
         print("data saved to bascase")
-    again = input("again? (y/n): ")
+    # again = input("again? (y/n): ")
+    again = specs[iter][3]
+    iter += 1
+
 
 
 # save additional data
@@ -119,41 +135,47 @@ with open("../../results/model/"+folder+"/network.pickle","wb") as handle:
     pickle.dump(G, handle)
 
 print("saved all data!")
-input("plot?")
+# input("plot?")
 
 
 fig, (ax1,ax3) = plt.subplots(2,1,sharex=True)
+# norm = mpl.colors.Normalize(vmin=0, vmax=6)
+cmap = cm.get_cmap("tab20",20)
+# cmap = cm.get_cmap("Dark2",8)
 ax3.plot('x','Admin',ls='-',fillstyle='none', data = data_explore,
-    label = "A total")
+    label = "$A_{total}$", color = cmap(0))
 ax3.fill_between(data_explore['x'],data_explore['A_pool_shk'],
-    label = "A_shock",alpha = .5)
+    label = "$A_{shock}$",alpha = .5,color = cmap(0))
 ax3.fill_between(data_explore['x'],data_explore['A_pool_exp']+data_explore['A_pool_shk'],
     data_explore['A_pool_shk'],
-    label = "A_explore",alpha = .5)
+    label = "$A_{exploration}$",alpha = .5,color = cmap(1))
 ax4 = ax3.twinx()
 ax4.plot(data_explore['x'], data_explore['Ecap'],
-    label = "Energy per capita", c = "g", ls = "-", lw = .5)
+    label = "$E_{prodcution}$", c = "g", ls = "-", lw = .5,color = cmap(2))
 
 ax3.set_ylim(0,1)
 ax2= ax1.twinx()
-ax1.plot(data_base['x'],data_base['Admin'],ls='-',fillstyle='none')
+ax1.plot(data_base['x'],data_base['Admin'],ls='-',fillstyle='none',color = cmap(0))
 
 ax1.fill_between(data_base['x'],data_base['A_pool_shk'],
-    alpha = .5)
+    alpha = .5,color = cmap(0))
 ax1.fill_between(data_base['x'],data_base['A_pool_exp']+data_base['A_pool_shk'],
     data_base['A_pool_shk'],
-    alpha = .5)
-ax2.plot(data_base['x'], data_base['Ecap'], c = "g", ls = "-", lw = .5)
+    alpha = .5,color = cmap(1))
+ax2.plot(data_base['x'], data_base['Ecap'], c = "g", ls = "-", lw = .5,color = cmap(2))
 
 ax1.set_ylim(0,1)
 plt.setp(ax1.get_xticklabels(), visible=False)
 ax4.set_ylim(0,max(np.append(data_base["Ecap"],data_explore['Ecap']))+.1)
 ax2.set_ylim(0,max(np.append(data_base["Ecap"],data_explore['Ecap']))+.1)
-fig.legend(ncol = 4)
+fig.legend(loc = "upper right", bbox_to_anchor = (.9,.88),ncol = 1)
 fig.text(0.03, 0.5, 'Administrator share', ha='center',
     va='center', rotation='vertical')
 fig.text(0.97, 0.5, 'Energy per capita', ha='center',
     va='center', rotation='vertical')
 fig.text(0.5, 0.04, 'Time', ha='center', va='center')
+
+ax1.annotate("A", xy=(0.01, 0.9), xycoords="axes fraction")
+ax3.annotate("B", xy=(0.01, 0.9), xycoords="axes fraction")
 plt.show()
 fig.savefig("../../results/model/"+folder+"/Admin_Ecap_twocases.png")
