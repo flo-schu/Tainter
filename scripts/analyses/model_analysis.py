@@ -59,9 +59,10 @@ plt.axhline(e0, c = "g", lw = 1, ls = "-")
 
 
 # add fixpoints to data found in analysis ######################################
-folder = input("folder name")
-data_explore = pd.read_csv("./results/model/"+folder+"/t5_explore.csv")
-data_base    = pd.read_csv("./results/model/"+folder+"/t5_base.csv")
+# folder = input("folder name")
+folder = "20190419_0930"
+data_explore = pd.read_csv("../../results/model/"+folder+"/t5_explore.csv")
+data_base    = pd.read_csv("../../results/model/"+folder+"/t5_base.csv")
 
 fig, (ax1,ax3) = plt.subplots(2,1,sharex=True)
 ax3.plot('x','Admin',ls='-',fillstyle='none', data = data_explore,
@@ -99,7 +100,7 @@ fig.text(0.97, 0.5, 'Energy per capita', ha='center',
     va='center', rotation='vertical')
 fig.text(0.5, 0.04, 'Time', ha='center', va='center')
 fig.legend(ncol = 4)
-fig.savefig("./results/model/"+folder+"/Admin_Ecap_twocases_fixpoints.png")
+fig.savefig("../../results/model/"+folder+"/Admin_Ecap_twocases_fixpoints.png")
 plt.show()
 
 # Analyse e for many phi #######################################################
