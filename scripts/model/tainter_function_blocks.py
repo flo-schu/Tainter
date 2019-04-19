@@ -12,7 +12,7 @@ import importlib.util
 
 #os.chdir(os.getcwd()+'\\Tainter\\Models\\tf5')
 #import networkx from tf5 source
-spec = importlib.util.spec_from_file_location("networkx", "./packages/networkx/__init__.py")
+spec = importlib.util.spec_from_file_location("networkx", "../../packages/networkx/__init__.py")
 nx = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(nx)
 
