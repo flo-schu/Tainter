@@ -1,7 +1,7 @@
 *.csv
 *.thm
 *.synctex.gz
-
+*__pycache__*
 *.out
 *.log
 *.fls
