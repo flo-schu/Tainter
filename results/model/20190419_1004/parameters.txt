@@ -1,0 +1,1 @@
+{'print_every': None, 'death_energy_level': 0.25, 'eff': 1.0, 'threshold': 1.0, 'tmax': 10000, 'shock': ['on', 'beta', [1, 15]], 'stress': ['off'], 'a': 1.0, 'mepercent': 0.75, 'exploration': 0.02, 'choice': 'topcoordinated', 'first_admin': 'highest degree', 'layout': 'fixed', 'p': 0.02, 'k': 0, 'N': 400, 'network': 'erdos'}
