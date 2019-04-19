@@ -3,42 +3,34 @@
 
 
 \subsection{Tainter inspired network of a runaway society steering into deminishing marginal returns and collapse}
-The object of our study is a simple society that has access to an arbitrary resource $a$, which is a placeholder for any sort of energy source.
 
-The society has N members, represented by the nodes of an undirected network. The complexity of the society is modelled by hierarchical societal classes. Each node can be a labourer $L$, an administrator $A$, or a coordinated Labourer $L_c$, which simply means being neighbour of an administrator. A high administration share is regarded as a high complexity.
-
-Only members of $L$ and $L_c$ contribute to the use of $a$, which the society needs for survival. Administrators increase the efficiency of their labouring neighbours (who are therefore members of $L_c$) but do not contribute to the production/survival directly. The energetic output of the society is measured as Energy per capita, $E_{\text{cap}}$:
+We considered an Erdos Renyi network with a fixed density of links ($\rho$) and stable number of $N$ nodes, representing social entities participating in a simple hierarchical society, which is made up of three classes of different ability to produce energy ($E$). Initially the network consists only of working class nodes ($W = N$), which harvest an arbitrary energy resource ($R$) to fulfill the energy requirement of the society ($\epsilon$) with an efficiency $\phi_w = 1~e~capita^{-1}$.
 
 \begin{equation}
-    E_{\text{cap}} = a \ \frac{|L| + |L_c|^e}{N},
+  E = R (W^{\phi_w} + C^{\phi_c})
 \end{equation}
+%epsilon = threshold
+%phi = efficiency
+%rho = link density
+%TODO: find sybmol for muchless
 
-where $e$ is the efficiency increase exponent for neighbours of administrators. The society has an interest in maintaining the energy output above a certain threshold $T$.
-
-In the basic model version, $a$ (initially set to 1) is reduced by a percentage stress $s$ at each time step, $a_{\text{n+1}} = (1-s)\  a_{\text{n}}$.
-
-$s$ represents what Tainter calls \textit{problems to solve}, such as population pressure or changing environmental conditions. If $E_{\text{cap}} < T$, the network reacts by adding another node to $A$. The first administrator is chosen randomly from all nodes with highest degree. Every following administrator will be chosen randomly out of the set of $L_c$ with highest degree.
-If $E_{\text{cap}}$ falls under a set death energy level, the simulation ends.
-
-First, the general behaviour of the model was examined using a Barabási–Albert preferential attachment network and compared to the predictions of Tainter's theory. For this, we distinguished between two different assumptions concerning the development of hierarchy in a society: The first is that a society chooses to form an administration class in order to increase the energy output to a higher level, without any external pressure (and continues this strategy). This means that $s = 0$ and $T>1$. The second presumption, which is used by Tainter, says that a society has no choice but to increase complexity in order to solve problems; therefore, a constant stress rate $s > 0$ enforces a reaction even without high ambitions of the society.
-
-In a second part of analysis, the influence of the most important parameters was scanned, taking into account the following network types:
-
-\begin{table}[h!]
-\centering
-\begin{tabular}{l|r}
-Network type & Parameters \\\hline
-Barabási–Albert & $m$ (number of edges to attach from a new node to existing nodes) \\
-Watts–Strogatz & $k$ (number of nearest neighbours), $r$ (rewiring probability) \\
-Erdős-Rényi & $p$ (probability for edge creation)
-\end{tabular}
-%%\caption{\label{tab:widgets}An example table.}
-\end{table}
-
-To ensure comparability, the parameters were chosen such that the mean degree is identical.
-In a third step, the effect of a simple model extension was studied, which is the introduction of a population development mechanism.
+At the beginning of each time step, the availability of $R$ is drawn from a beta distribution with parameters $\alpha = 15$ and $\beta = 1$, mostly resulting in $R \approxeq 1$, with a low chance of $R << 1$. When $E < \epsilon$, the network reacts by selecting the node with the highest degree and changes its class to Administrator ($A$). Nodes of class $A$ do not produce energy but instead increase the efficiency of the neighboring nodes ($C$) to $\phi_c$. In each following time step the node with the highest degree out of all $C$ is recruited whenever $E < \epsilon$.
 
 \subsection{random class exploration as a countermeasure to collapse on a individual basis}
 
+Additionally we implemented a random class exploration, in which a random probability ($p_e$) is assigned to all nodes. At the beginning of each time step for each node a sample ($s$) is drawn from a uniform distribution [0,1]. When $s < p_e$, the node changes its class from $W, C$ to $A$ and vice versa.
+
 
 \subsection{Analytic approximation to the mechanistic probabilistic models}
+
+Model separated into two dynamics
+
+1. Reaction mechanism to stress:
+
+- network reacts to
+
+1. Exploration part
+
+\begin{equation}
+  A = p_e * (N - 2 x) + F(\frac{\epsilon N}{(N - x) (1 - \rho)^{x} + ((N - x) (1 - (1 - \rho)^{x}))^\phi}, \beta, \alpha)
+\end{equation}
