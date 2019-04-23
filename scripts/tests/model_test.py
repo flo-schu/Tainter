@@ -169,9 +169,9 @@ plt.setp(ax1.get_xticklabels(), visible=False)
 ax4.set_ylim(0,max(np.append(data_base["Ecap"],data_explore['Ecap']))+.1)
 ax2.set_ylim(0,max(np.append(data_base["Ecap"],data_explore['Ecap']))+.1)
 fig.legend(loc = "upper right", bbox_to_anchor = (.9,.88),ncol = 1)
-fig.text(0.03, 0.5, 'Administrator share', ha='center',
+fig.text(0.05, 0.5, 'Administrator share', ha='center',
     va='center', rotation='vertical')
-fig.text(0.97, 0.5, 'Energy per capita', ha='center',
+fig.text(0.98, 0.5, 'Energy per capita', ha='center',
     va='center', rotation='vertical')
 fig.text(0.5, 0.04, 'Time', ha='center', va='center')
 
