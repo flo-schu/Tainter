@@ -31,7 +31,7 @@ fig.colorbar(im, cax = cbar_ax)
 fig.text(0.05, 0.5, 'Efficiency ($\\phi$)', ha='center',
     va='center', rotation='vertical')
 fig.text(0.5, 0.04, 'Link Density ($\\rho$)', ha='center', va='center')
-ax1.annotate("A", xy=(0.03, 0.95), xycoords="axes fraction", color = "white")
+ax1.annotate("A", xy=(0.03, 0.95), xycoords="axes fraction", color = "black")
 ax2.annotate("B", xy=(0.03, 0.95), xycoords="axes fraction", color = "black")
 plt.savefig("../../results/model/"+folder+"/"+file+".png")
 plt.show()
