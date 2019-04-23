@@ -6,8 +6,8 @@ folder = "20190419_1134"
 file = "parscan_base"
 data = pd.read_csv("../../results/model/"+folder+"/"+file+".csv")
 
-rho     = np.linspace(0,0.1,11)  # link density in erdos renyi network
-phi     = np.linspace(1,1.5,11)   # efficiency of coordinated Workers
+rho     = np.linspace(0,0.1,101)  # link density in erdos renyi network
+phi     = np.linspace(1,1.5,101)   # efficiency of coordinated Workers
 # pargrid = it.product(rho, phi)
 print(data)
 
