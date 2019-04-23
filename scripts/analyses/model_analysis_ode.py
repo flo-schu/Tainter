@@ -38,7 +38,7 @@ def f_a(t, x, N, p_e, epsilon, rho, phi, beta, alpha):
     #TODO: Marc kannst du das mal checken?!
 
     return(
-    p_e * (N - 2 * x)  +
+        p_e * (N - 2 * x)  +
     sci.beta.cdf(
         (((epsilon * N) / (((N - x) * (1 - rho) ** x) +
         ((N - x) * (1 - (1 - rho) ** x)) ** phi))),
@@ -59,18 +59,30 @@ def get_timeseries(timestep, tmax, initial_value):
     t = [0]
     results = [initial_value]
 
-    while r.t < tmax and r.successful():
-        r.integrate(r.t+timestep)
-        t.append(r.t)
-        results.append(r.y)
-
+    # VERY HACKY!!!
+    ############################################
+    i = 0
+    while i < tmax and r.successful():
+        if r.y < N-2:
+            r.integrate(r.t+timestep)
+            t.append(r.t)
+            results.append(r.y)
+            # print(r.t, r.y)
+            i += 1
+        else:
+            t.append(i)
+            results.append(r.y)
+            i += 1
     return t, results
-
+##################################################
 p_e = 0.0 # base
 tb, xb = get_timeseries(1, 1500, 0)
+# print(xb[len(xb)-10:len(xb)])
 # plt.plot(tb,np.array(xb)/N)
 # plt.plot(tb,f_e(np.array(xb), N, rho, phi))
 # plt.show()
+
+
 p_e = 0.02 # explore
 te, xe = get_timeseries(1, 1500, 0)
 
@@ -107,6 +119,8 @@ fig.text(0.05, 0.5, 'Administrator share', ha='center',
 fig.text(0.98, 0.5, 'Energy per capita', ha='center',
     va='center', rotation='vertical')
 fig.text(0.5, 0.04, 'Time', ha='center', va='center')
+ax1.annotate("A", xy=(0.01, 0.9), xycoords="axes fraction")
+ax3.annotate("B", xy=(0.01, 0.9), xycoords="axes fraction")
 fig.legend(loc = "center", bbox_to_anchor = (.75,.7),ncol = 1)
 plt.savefig("../../results/model/"+folder+"/comp_integration-model_exploration.png")
 plt.show()
