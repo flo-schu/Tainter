@@ -36,16 +36,28 @@ alpha   = 1     # location parameter of beta distribution
 
 def f_a(t, x, N, p_e, epsilon, rho, phi, beta, alpha):
     #TODO: Marc kannst du das mal checken?!
-
-    return(
-        p_e * (N - 2 * x)  +
-    sci.beta.cdf(
+    # print(x )
+    if (x >= N):
+        factor = 0
+    else:
+        factor = sci.beta.cdf(
         (((epsilon * N) / (((N - x) * (1 - rho) ** x) +
         ((N - x) * (1 - (1 - rho) ** x)) ** phi))),
         a = beta, b = alpha)
-    )
+
+    return(p_e * (N - 2 * x) + factor)
+
+    # return(
+    #     p_e * (N - 2 * x)  +
+    # sci.beta.cdf(
+    #     (((epsilon * N) / (((N - x) * (1 - rho) ** x) +
+    #     ((N - x) * (1 - (1 - rho) ** x)) ** phi))),
+    #     a = beta, b = alpha)
+    # )
 
 def f_e(x, N, rho, phi):
+    x = np.array([N if i >= N else i for i in x ])
+
     return(
     ((N - x) * (1 - rho) ** x + ((N - x) * (1 - (1 - rho) ** x)) ** phi) / N
     )
@@ -59,37 +71,29 @@ def get_timeseries(timestep, tmax, initial_value):
     t = [0]
     results = [initial_value]
 
-    # VERY HACKY!!!
-    ############################################
-    i = 0
-    while i < tmax and r.successful():
-        if r.y < N-2:
-            r.integrate(r.t+timestep)
-            t.append(r.t)
-            results.append(r.y)
-            # print(r.t, r.y)
-            i += 1
-        else:
-            t.append(i)
-            results.append(r.y)
-            i += 1
+    while r.t < tmax and r.successful():
+        r.integrate(r.t+timestep)
+        t.append(r.t)
+        results.append(r.y)
     return t, results
 ##################################################
 p_e = 0.0 # base
 tb, xb = get_timeseries(1, 1500, 0)
+# xb2 = np.mean(np.array(xb[0:150000]).reshape(-1,100),axis = 1)
+# tb2 = np.arange(1500)
 # print(xb[len(xb)-10:len(xb)])
 # plt.plot(tb,np.array(xb)/N)
 # plt.plot(tb,f_e(np.array(xb), N, rho, phi))
 # plt.show()
-
-
+# print(f_e(np.array(xb), N, rho, phi))
 p_e = 0.02 # explore
 te, xe = get_timeseries(1, 1500, 0)
 
-
+# len(te)
 
 # folder = input("folder name:")
-folder = "20190419_1134"
+# folder = "20190419_1134"
+folder = "20190424_0141"
 data_b = pd.read_csv("../../results/model/"+folder+"/t5_base.csv")
 data_e = pd.read_csv("../../results/model/"+folder+"/t5_explore.csv")
 
@@ -106,11 +110,11 @@ ax2.plot(tb, f_e(np.array(xb), N, rho, phi),
 
 ax3.plot([data_e.x], [data_e.Admin],
     marker = "o", ls = "",  color = cmap(1))
-ax3.plot(tb, np.array(xe)/N, color = cmap(0))
+ax3.plot(te, np.array(xe)/N, color = cmap(0))
 ax4= ax3.twinx()
 ax4.plot([data_e.x], [data_e.Ecap],
     marker = "o", ls = "", alpha = .1, color = cmap(3))
-ax4.plot(tb, f_e(np.array(xe), N, rho, phi),
+ax4.plot(te, f_e(np.array(xe), N, rho, phi),
     color = cmap(2))
 
 
