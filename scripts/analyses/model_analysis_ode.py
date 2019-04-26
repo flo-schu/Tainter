@@ -7,6 +7,7 @@ import pandas as pd
 import os as os
 from scipy.integrate import ode
 from scipy.integrate import trapz
+from collections import OrderedDict
 
 # os.chdir("./Tainter/Models/tf5_cluster")
 # case = input("plot explore or base?")
@@ -93,27 +94,35 @@ te, xe = get_timeseries(1, 1500, 0)
 
 # folder = input("folder name:")
 # folder = "20190419_1134"
-folder = "20190424_0141"
-data_b = pd.read_csv("../../results/model/"+folder+"/t5_base.csv")
-data_e = pd.read_csv("../../results/model/"+folder+"/t5_explore.csv")
+folder = "20190424_0932"
+admin_b = np.load("../../results/model/"+folder+"/base_admin.npy")
+ecap_b = np.load("../../results/model/"+folder+"/base_ecap.npy")
+
+admin_e = np.load("../../results/model/"+folder+"/expl_admin.npy")
+ecap_e = np.load("../../results/model/"+folder+"/expl_ecap.npy")
+
 
 cmap = cm.get_cmap("tab20",20)
 fig,(ax1,ax3) = plt.subplots(2,1,sharex = True)
-ax1.plot(data_b.x, data_b.Admin, label = "$A_{simulation}$",
-    marker = "o", ls = "",  color = cmap(1))
-ax1.plot(tb, np.array(xb)/N, label = "$A_{analytic}$", color = cmap(0))
 ax2= ax1.twinx()
-ax2.plot(data_b.x, data_b.Ecap,
-    marker = "o", ls = "", label = "$E_{simulation}$", alpha = .1, color = cmap(3))
+ax4= ax3.twinx()
+
+# simulation
+for i in np.arange(100):
+    ax1.plot(admin_b[:,i], label = "$A_{simulation}$" if i == 0 else "",
+        color = cmap(1), alpha = .1)
+for i in np.arange(100):
+    ax2.plot(ecap_b[:,i], label = "$E_{simulation}$" if i == 9 else "",
+        alpha = .1, color = cmap(3))
+ax3.plot(admin_e,  color = cmap(1), alpha = .1)
+ax4.plot(ecap_e, alpha = .1, color = cmap(3))
+
+# analytic
+ax1.plot(tb, np.array(xb)/N, label = "$A_{analytic}$", color = cmap(0))
 ax2.plot(tb, f_e(np.array(xb), N, rho, phi),
     label = "$E_{analytic}$", color = cmap(2))
 
-ax3.plot([data_e.x], [data_e.Admin],
-    marker = "o", ls = "",  color = cmap(1))
 ax3.plot(te, np.array(xe)/N, color = cmap(0))
-ax4= ax3.twinx()
-ax4.plot([data_e.x], [data_e.Ecap],
-    marker = "o", ls = "", alpha = .1, color = cmap(3))
 ax4.plot(te, f_e(np.array(xe), N, rho, phi),
     color = cmap(2))
 
@@ -125,6 +134,12 @@ fig.text(0.98, 0.5, 'Energy per capita', ha='center',
 fig.text(0.5, 0.04, 'Time', ha='center', va='center')
 ax1.annotate("A", xy=(0.01, 0.9), xycoords="axes fraction")
 ax3.annotate("B", xy=(0.01, 0.9), xycoords="axes fraction")
+# handles, labels = plt.gca().get_legend_handles_labels()
+# print(labels)
+# by_label = OrderedDict(zip(labels, handles))
+# print(by_label)
+# fig.legend(by_label.values(), by_label.keys(),
+#     loc = "center", bbox_to_anchor = (.75,.7),ncol = 1)
 fig.legend(loc = "center", bbox_to_anchor = (.75,.7),ncol = 1)
 plt.savefig("../../results/model/"+folder+"/comp_integration-model_exploration.png")
 plt.show()
