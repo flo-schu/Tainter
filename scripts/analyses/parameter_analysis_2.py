@@ -1,6 +1,11 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import matplotlib as mpl
 import pandas as pd
+import sys
+sys.path.append('../helpers/')
+from shifted_cmap import shiftedColorMap
+
 
 folder = "20190419_1134"
 fb = "parscan_base"
@@ -14,26 +19,34 @@ rho     = np.linspace(0,0.1,101)  # link density in erdos renyi network
 phi     = np.linspace(1,1.5,101)   # efficiency of coordinated Workers
 # pargrid = it.product(rho, phi)
 
+orig_cmap = mpl.cm.RdBu
+midpoint = (np.absolute(np.min([np.array(data_b.te),np.array(data_e.te),data_diff])) /
+    (np.max([np.array(data_b.te),np.array(data_e.te),data_diff]) -
+    np.min([np.array(data_b.te),np.array(data_e.te),data_diff])))
+print(midpoint)
+shifted_cmap = shiftedColorMap(orig_cmap, midpoint=midpoint, name='shiftedcmap')
+
+
 fig, (ax1,ax2,ax3) = plt.subplots(nrows = 1,ncols = 3, sharey = True)
 # produced energy
 grid = np.array(data_b.te).reshape((len(rho), len(phi)))
 grid = np.flipud(grid.T)
 im = ax1.imshow(grid, extent= (data_b.rho.min(), data_b.rho.max(), data_b.phi.min(), data_b.phi.max()),
-    interpolation = "nearest", cmap = "Spectral_r", aspect = "auto",
+    interpolation = "nearest", cmap = shifted_cmap, aspect = "auto",
     vmin = np.min([np.array(data_b.te),np.array(data_e.te),data_diff]),
     vmax = np.max([np.array(data_b.te),np.array(data_e.te),data_diff]))
 
 grid = np.array(data_e.te).reshape((len(rho), len(phi)))
 grid = np.flipud(grid.T)
 im = ax2.imshow(grid, extent= (data_e.rho.min(), data_e.rho.max(), data_e.phi.min(), data_e.phi.max()),
-    interpolation = "nearest", cmap = "Spectral_r", aspect = "auto",
+    interpolation = "nearest", cmap = shifted_cmap, aspect = "auto",
     vmin = np.min([np.array(data_b.te),np.array(data_e.te),data_diff]),
     vmax = np.max([np.array(data_b.te),np.array(data_e.te),data_diff]))
 
 grid = data_diff.reshape((len(rho), len(phi)))
 grid = np.flipud(grid.T)
 im = ax3.imshow(grid, extent= (data_e.rho.min(), data_e.rho.max(), data_e.phi.min(), data_e.phi.max()),
-    interpolation = "nearest", cmap = "Spectral_r", aspect = "auto",
+    interpolation = "nearest", cmap = shifted_cmap, aspect = "auto",
     vmin = np.min([np.array(data_b.te),np.array(data_e.te),data_diff]),
     vmax = np.max([np.array(data_b.te),np.array(data_e.te),data_diff]))
 
@@ -47,6 +60,8 @@ fig.text(0.05, 0.5, 'Efficiency ($\\phi$)', ha='center',
 fig.text(0.5, 0.04, 'Link Density ($\\rho$)', ha='center', va='center')
 ax1.annotate("A", xy=(0.03, 0.95), xycoords="axes fraction", color = "black")
 ax2.annotate("B", xy=(0.03, 0.95), xycoords="axes fraction", color = "black")
+ax3.annotate("C", xy=(0.03, 0.95), xycoords="axes fraction", color = "black")
+
 plt.savefig("../../results/model/"+folder+"/parscan_te.png")
 plt.show()
 
