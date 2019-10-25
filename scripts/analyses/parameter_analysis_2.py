@@ -14,7 +14,7 @@ data_b = pd.read_csv("../../results/model/"+folder+"/"+fb+".csv")
 data_e = pd.read_csv("../../results/model/"+folder+"/"+fe+".csv")
 data_diff = np.array(data_e.te) - np.array(data_b.te)
 
-
+print(data_b)
 rho     = np.linspace(0,0.1,101)  # link density in erdos renyi network
 phi     = np.linspace(1,1.5,101)   # efficiency of coordinated Workers
 # pargrid = it.product(rho, phi)

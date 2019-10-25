@@ -1,4 +1,4 @@
-*.csv
+
 *.thm
 *.synctex.gz
 *__pycache__*

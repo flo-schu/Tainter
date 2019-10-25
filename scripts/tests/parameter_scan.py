@@ -114,7 +114,7 @@ for i in pargrid:
 
     te_data.append(te[0])
     s_data.append(t[-1])
-    print(i, t, te)
+    print(i)
 
 
 data = pd.DataFrame(np.array([phi_par,rho_par,te_data,s_data]).transpose())
