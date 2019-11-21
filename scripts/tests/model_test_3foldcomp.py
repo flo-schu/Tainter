@@ -18,7 +18,7 @@ import time as time
 
 my_plot_time = 5000
 specs = [[0,    my_plot_time,"b","y"],
-         [0.0035,my_plot_time,"i","y"],
+         [0.00275,my_plot_time,"i","y"],
          [0.02, my_plot_time,"e","n"]]
 iter = 0
 folder = time.strftime("%Y%m%d_%H%M")
