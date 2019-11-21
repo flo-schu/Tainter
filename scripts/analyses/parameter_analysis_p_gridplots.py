@@ -8,8 +8,10 @@ from shifted_cmap import shiftedColorMap
 
 
 folder = "20191027_0101"
+# folder = "20191112_0937"
 
 data   = pd.read_csv("../../results/model/"+folder+"/parscan.csv")
+# data   = pd.read_csv("../../results/model/"+folder+"/parscan_plus_p0.csv")
 
 ### FILTER DATA SET ###################################################
 data   = data.query("rho < 1")
@@ -25,7 +27,7 @@ dat = np.array(data)[:,1:]
 names = np.array(data.columns[1:])
 
 te_0 = dat[p_e == 0, names == "te"]
-# print(te_0)
+print(te_0)
 # replicate te of pe = 0 npe times and reshape to array of arrays with 1 element each
 te_0_arr = np.reshape(np.array(te_0.tolist() * len(npe)),(len(data),1))
 # add new arrays to existing array
@@ -54,7 +56,11 @@ shifted_cmap = shiftedColorMap(orig_cmap, midpoint=midpoint, name='shiftedcmap')
 
 # pe on x axis
 fig, axes = plt.subplots(nrows = 4, ncols = 5, sharex=True, sharey=True)
-for i, ax in zip(np.arange(0,.02,.001), axes.flatten()):
+
+# select p range
+# pe_range = np.arange(0,.02,.001)
+pe_range = npe
+for i, ax in zip(pe_range, axes.flatten()):
     my_sub = ( i - 0.00001 < p_e ) & ( p_e < i + 0.00001 )
     print(i, np.sum(my_sub))
     d = dat[my_sub,:]
@@ -65,7 +71,7 @@ for i, ax in zip(np.arange(0,.02,.001), axes.flatten()):
     im = ax.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
         aspect = "auto", interpolation = "nearest", cmap = shifted_cmap,
         vmin = epmin, vmax = epmax)
-    ax.text(x = max(nrho)*.5, y = max(nphi)*.92, s = str(np.round(i,3)),
+    ax.text(x = max(nrho)*.7, y = max(nphi)*.92, s = str(np.round(np.log10(i),1)),
             fontsize = 8)
 
 
