@@ -58,7 +58,8 @@ def get_timeseries(timestep, tmax, initial_value, rho, phi):
 
     return t, results
 
-folder = "20190419_1134"
+# folder = "20190419_1134"
+folder = "20191025_1217"
 
 
 rho     = np.linspace(0,0.1,101)  # link density in erdos renyi network
@@ -85,7 +86,7 @@ for i in pargrid:
 
     te_data.append(te[0])
     s_data.append(t[-1])
-    print(i, t, te)
+    print(i, "of", np.max(rho), np.max(phi))
 
 
 data = pd.DataFrame(np.array([phi_par,rho_par,te_data,s_data]).transpose())
@@ -114,7 +115,7 @@ for i in pargrid:
 
     te_data.append(te[0])
     s_data.append(t[-1])
-    print(i)
+    print(i, "of", np.max(rho), np.max(phi))
 
 
 data = pd.DataFrame(np.array([phi_par,rho_par,te_data,s_data]).transpose())
