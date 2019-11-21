@@ -4,7 +4,9 @@ from matplotlib import cm
 import matplotlib as mpl
 import numpy as np
 
-folder = "20190424_0141"
+# folder = "20190424_0141"
+folder = "20191121_1152"
+
 
 data_explore = pd.read_csv("../../results/model/"+folder+"/t5_explore.csv")
 data_base    = pd.read_csv("../../results/model/"+folder+"/t5_base.csv")
