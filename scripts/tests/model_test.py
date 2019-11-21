@@ -27,6 +27,9 @@ else:
     os.mkdir("../../results/model/"+folder)
 
 
+print(folder)
+input("press enter to continue")
+
 #foldername = input("Foldername")
 again = "y"
 while again == "y":
