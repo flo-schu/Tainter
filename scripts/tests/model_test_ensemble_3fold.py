@@ -18,7 +18,7 @@ import time as time
 
 my_plot_time = 5000
 specs = [[0,    my_plot_time,"b","y"],
-         [0.0035,my_plot_time,"i","y"],
+         [0.00275,my_plot_time,"i","y"],
          [0.02, my_plot_time,"e","n"]]
 folder = time.strftime("%Y%m%d_%H%M")
 if os.path.isdir("../../results/model/"+folder):
@@ -31,6 +31,8 @@ else:
 for irun in np.arange(100):
     iter = 0
     again = "y"
+    print(irun)
+
     while again == "y":
         # random.seed(4)
         # np.random.seed(4)
@@ -52,13 +54,13 @@ for irun in np.arange(100):
                                   a = 1.0 ,
                                   stress = ["off"] ,
                                   shock = ["on","beta",[1,15]],
-                                  tmax = 10000,
+                                  tmax = 5000,
                                   threshold =1.0 ,
                                   eff = 1.05 ,
                                   death_energy_level = 0.0,
                                   print_every = None)
 
-        print(t+1, wb, merun)
+        print(expl,t+1, wb, merun)
 
         # plot_time = int(input("plot time (steps):"))
         plot_time = specs[iter][1]
@@ -131,7 +133,6 @@ for irun in np.arange(100):
         # again = input("again? (y/n): ")
         again = specs[iter][3]
         iter += 1
-        print(irun)
 
 
 
