@@ -7,8 +7,9 @@ import numpy as np
 # folder = "20190424_0141"
 # folder = "20191121_1225"
 # folder = "20191121_1250"
-folder = "20191121_1254"
+# folder = "20191121_1254"
 # folder = "20191121_1448"
+folder = "20191121_1734"
 
 data_explore = pd.read_csv("../../results/model/"+folder+"/t5_explore.csv")
 data_base    = pd.read_csv("../../results/model/"+folder+"/t5_base.csv")
@@ -85,9 +86,9 @@ fig.legend(loc = "upper center", bbox_to_anchor = (.5,.95   ),ncol = 4,
 ax1.annotate("A", xy=(0.01, 0.83), xycoords="axes fraction")
 ax3.annotate("B", xy=(0.01, 0.83), xycoords="axes fraction")
 ax5.annotate("C", xy=(0.01, 0.83), xycoords="axes fraction")
-ax1.annotate("p = 0",     xy=(0.9, 0.83), xycoords="axes fraction")
-ax3.annotate("p = 0.003", xy=(0.9, 0.83), xycoords="axes fraction")
-ax5.annotate("p = 0.02",  xy=(0.9, 0.83), xycoords="axes fraction")
+ax1.annotate("$p_{e}$ = 0",     xy=(0.85, 0.83), xycoords="axes fraction")
+ax3.annotate("$p_{e}$ = 0.00275", xy=(0.85, 0.83), xycoords="axes fraction")
+ax5.annotate("$p_{e}$ = 0.02",  xy=(0.85, 0.83), xycoords="axes fraction")
 # fig.tight_layout()
 plt.show()
 fig.savefig("../../results/model/"+folder+"/pub_figure1.png")
