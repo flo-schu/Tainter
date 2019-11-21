@@ -4,7 +4,8 @@ import pandas as pd
 import os
 
 
-folder  = "../../results/model/20191121_1254/"
+# folder  = "../../results/model/20191121_1616/" # simulation with pe(i) = 0.003
+folder  = "../../results/model/20191121_1732/" # simulation with pe(i) = 0.00275
 ddir = os.listdir(folder)
 dbase  = [j for j in ddir if "base" in j]
 dexpl  = [j for j in ddir if "expl" in j]
@@ -12,7 +13,6 @@ dinter = [j for j in ddir if "intermediate" in j]
 
 def extract_val(flist, timesteps, index):
     out = np.ndarray(shape = (timesteps,len(flist)))
-    print(out)
     for i in np.arange(len(flist)):
         data = pd.read_csv(folder+flist[i])
         temp = np.array(data[index])
@@ -25,6 +25,7 @@ extract_time = 5000
 
 admin_base  = extract_val(dbase, 5000, "Admin")
 ecap_base   = extract_val(dbase, 5000, "Ecap")
+st_base     = extract_val(dbase, 5000, "st")
 admin_inter = extract_val(dinter, 5000, "Admin")
 ecap_inter  = extract_val(dinter, 5000, "Ecap")
 admin_expl  = extract_val(dexpl, 5000, "Admin")
