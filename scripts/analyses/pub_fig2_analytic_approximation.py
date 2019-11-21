@@ -8,6 +8,7 @@ import os as os
 from scipy.integrate import ode
 from scipy.integrate import trapz
 from collections import OrderedDict
+import seaborn as sns
 
 # os.chdir("./Tainter/Models/tf5_cluster")
 # case = input("plot explore or base?")
@@ -97,7 +98,8 @@ ti, xi = get_timeseries(1, 5000, 0)
 
 # folder = input("folder name:")
 # folder = "20190419_1134"
-folder = "20191121_1616"
+# folder = "20191121_1616" # pe(i)=0.003
+folder = "20191121_1732" # pe(i)=0.00275
 admin_b = np.load("../../results/model/"+folder+"/base_admin.npy")
 ecap_b = np.load("../../results/model/"+folder+"/base_ecap.npy")
 
@@ -106,6 +108,15 @@ ecap_e = np.load("../../results/model/"+folder+"/expl_ecap.npy")
 
 admin_i = np.load("../../results/model/"+folder+"/inter_admin.npy")
 ecap_i = np.load("../../results/model/"+folder+"/inter_ecap.npy")
+
+st_b = list()
+st_i = list()
+st_e = list()
+
+for i in np.arange(100):
+    st_b.append(np.sum(ecap_b[:,i]!=0))
+    st_i.append(np.sum(ecap_i[:,i]!=0))
+    st_e.append(np.sum(ecap_e[:,i]!=0))
 
 
 textwidth = 12.12537
@@ -117,8 +128,11 @@ fig,(ax1,ax3,ax5) = plt.subplots(3,1,sharex = True,
 ax2= ax1.twinx()
 ax4= ax3.twinx()
 ax6= ax5.twinx()
+ax7= ax1.twinx()
+ax8= ax3.twinx()
+ax9= ax5.twinx()
 
-alpha_sim = .25
+alpha_sim = .05
 # simulation
 for i in np.arange(100):
     ax1.plot(admin_b[:,i],
@@ -135,32 +149,54 @@ ax5.plot(admin_e,  color = cmap(1), alpha = alpha_sim)
 ax6.plot(ecap_e, alpha = alpha_sim, color = cmap(3))
 
 # analytic
-ax1.plot(tb, np.array(xb)/N, label = "$A_{analytic}$", color = cmap(0))
-ax2.plot(tb, f_e(np.array(xb), N, rho, phi),
+ax1.plot(tb, np.array(xb)/N, "--",
+         label = "$A_{analytic}$", color = cmap(0))
+ax2.plot(tb, f_e(np.array(xb), N, rho, phi), "--",
          label = "$E_{analytic}$", color = cmap(2))
 
-ax3.plot(ti, np.array(xi)/N, color = cmap(0))
-ax4.plot(ti, f_e(np.array(xi), N, rho, phi),
+ax3.plot(ti, np.array(xi)/N, "--",color = cmap(0))
+ax4.plot(ti, f_e(np.array(xi), N, rho, phi),"--",
          color = cmap(2))
 
-ax5.plot(te, np.array(xe)/N, color = cmap(0))
-ax6.plot(te, f_e(np.array(xe), N, rho, phi),
+ax5.plot(te, np.array(xe)/N, "--",color = cmap(0))
+ax6.plot(te, f_e(np.array(xe), N, rho, phi),"--",
          color = cmap(2))
 
-fig.text(0.05, 0.5, 'Administrator share', ha='center',
+sns.kdeplot(st_b, ax=ax7)
+sns.kdeplot(st_i, ax=ax8)
+sns.kdeplot(st_e, ax=ax9)
+
+# ax7.set_ylim(0,.1)
+# ax8.set_ylim(0,.1)
+# ax9.set_ylim(0,.1)
+
+
+
+ax1.set_ylim(0,1.05)
+ax3.set_ylim(0,1.05)
+ax5.set_ylim(0,1.05)
+# ax2.set_ylim(-.05,1.5)
+# ax4.set_ylim(-.05,1.5)
+# ax6.set_ylim(-.05,1.5)
+
+fig.subplots_adjust(bottom=0.08, left = 0.06, right = 0.94,top = .95)
+fig.text(0.01, 0.5, 'Administrator share', ha='center',
     va='center', rotation='vertical')
-fig.text(0.98, 0.5, 'Energy per capita', ha='center',
+fig.text(0.99, 0.5, 'Energy per capita', ha='center',
     va='center', rotation='vertical')
-fig.text(0.5, 0.04, 'Time', ha='center', va='center')
-ax1.annotate("A", xy=(0.01, 0.9), xycoords="axes fraction")
-ax3.annotate("B", xy=(0.01, 0.9), xycoords="axes fraction")
-ax5.annotate("B", xy=(0.01, 0.9), xycoords="axes fraction")
+fig.text(0.5, 0.01, 'Time', ha='center', va='center')
+ax1.annotate("A", xy=(0.01, 0.83), xycoords="axes fraction")
+ax3.annotate("B", xy=(0.01, 0.83), xycoords="axes fraction")
+ax5.annotate("C", xy=(0.01, 0.83), xycoords="axes fraction")
+ax1.annotate("$p_{e}$ = 0",       xy=(0.85, 0.75), xycoords="axes fraction")
+ax3.annotate("$p_{e}$ = 0.00275", xy=(0.85, 0.75), xycoords="axes fraction")
+ax5.annotate("$p_{e}$ = 0.02",    xy=(0.85, 0.75), xycoords="axes fraction")
 # handles, labels = plt.gca().get_legend_handles_labels()
 # print(labels)
 # by_label = OrderedDict(zip(labels, handles))
 # print(by_label)
 # fig.legend(by_label.values(), by_label.keys(),
 #     loc = "center", bbox_to_anchor = (.75,.7),ncol = 1)
-fig.legend(loc = "center", bbox_to_anchor = (.55,.8),ncol = 4, frameon = False)
+# fig.legend(loc = "center", bbox_to_anchor = (.55,.8),ncol = 4, frameon = False)
 plt.savefig("../../results/model/"+folder+"/comp_integration-model_exploration.png")
 plt.show()
