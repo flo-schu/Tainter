@@ -9,3 +9,6 @@
 *.aux
 *.npy
 *.png
+*.csv
+*.txt
+*.pickle
