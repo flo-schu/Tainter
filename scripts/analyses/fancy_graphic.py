@@ -6,7 +6,7 @@ import pandas as pd
 import os as os
 from scipy.integrate import ode
 from scipy.integrate import trapz
-os.chdir("./Tainter/Models/tf5_cluster")
+# os.chdir("./Tainter/Models/tf5_cluster")
 
 def f_a(t, x, N, p_e, epsilon, rho, phi, beta, alpha):
     return(
@@ -66,9 +66,10 @@ alpha   = 1     # location parameter of beta distribution
 t_b, x_b = get_timeseries(1, 1500, 0)
 
 
-folder = "20190327_1730"
-data_explore = pd.read_csv("./results/model/"+folder+"/t5_explore.csv")
-data_base    = pd.read_csv("./results/model/"+folder+"/t5_base.csv")
+# folder = "20190327_1730"
+folder = "20191121_1152"
+data_explore = pd.read_csv("../../results/model/"+folder+"/t5_explore.csv")
+data_base    = pd.read_csv("../../results/model/"+folder+"/t5_base.csv")
 
 
 fig, (ax1,ax3) = plt.subplots(2,1,sharex=True)
