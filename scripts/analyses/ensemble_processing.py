@@ -4,13 +4,15 @@ import pandas as pd
 import os
 
 
-folder  = "../../results/model/20190424_0932/"
+folder  = "../../results/model/20191121_1254/"
 ddir = os.listdir(folder)
-dbase = [j for j in ddir if "base" in j]
-dexpl = [j for j in ddir if "expl" in j]
+dbase  = [j for j in ddir if "base" in j]
+dexpl  = [j for j in ddir if "expl" in j]
+dinter = [j for j in ddir if "intermediate" in j]
 
 def extract_val(flist, timesteps, index):
     out = np.ndarray(shape = (timesteps,len(flist)))
+    print(out)
     for i in np.arange(len(flist)):
         data = pd.read_csv(folder+flist[i])
         temp = np.array(data[index])
@@ -19,12 +21,18 @@ def extract_val(flist, timesteps, index):
 
     return(out)
 
-admin_base = extract_val(dbase, 1500, "Admin")
-ecap_base  = extract_val(dbase, 1500, "Ecap")
-admin_expl = extract_val(dexpl, 1500, "Admin")
-ecap_expl  = extract_val(dexpl, 1500, "Ecap")
+extract_time = 5000
 
-np.save(folder+"base_admin", admin_base)
-np.save(folder+"base_ecap",  ecap_base)
-np.save(folder+"expl_admin", admin_expl)
-np.save(folder+"expl_ecap",  ecap_expl)
+admin_base  = extract_val(dbase, 5000, "Admin")
+ecap_base   = extract_val(dbase, 5000, "Ecap")
+admin_inter = extract_val(dinter, 5000, "Admin")
+ecap_inter  = extract_val(dinter, 5000, "Ecap")
+admin_expl  = extract_val(dexpl, 5000, "Admin")
+ecap_expl   = extract_val(dexpl, 5000, "Ecap")
+
+np.save(folder+"base_admin",  admin_base)
+np.save(folder+"base_ecap",   ecap_base)
+np.save(folder+"inter_admin", admin_inter)
+np.save(folder+"inter_ecap",  ecap_inter)
+np.save(folder+"expl_admin",  admin_expl)
+np.save(folder+"expl_ecap",   ecap_expl)
