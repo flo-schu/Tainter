@@ -27,6 +27,7 @@ names = np.array(data.columns[1:])
 
 out_e = list()
 out_s = list()
+out
 
 for i in npe:
     sube = dat[p_e == i, names == "te"]
@@ -39,7 +40,7 @@ fig, (ax1, ax2) = plt.subplots(2,1, sharex=True)
 ax1.plot(npe, out_e, label = "energy")
 ax2.plot(npe, out_s, label = "survival")
 ax2.set_xlabel("exploration probability (p_e)")
-ax1.set_ylabel("average total energy per unit time")
+ax1.set_ylabel("mean energy production  ")
 ax2.set_ylabel("mean survival time")
 ax1.legend()
 ax2.legend()
