@@ -166,7 +166,7 @@ ax2.plot(tb, f_e(np.array(xb), N, rho, phi),"--", color = cmap(cv["p0"]))
 ax2.plot(ti, f_e(np.array(xi), N, rho, phi),"--", color = cmap(cv["p1"]))
 ax2.plot(te, f_e(np.array(xe), N, rho, phi),"--", color = cmap(cv["p2"]))
 
-fig.subplots_adjust(bottom=0.08, left = 0.1, right = 0.94,top = .95)
+fig.subplots_adjust(bottom=0.08, left = 0.07, right = 0.97,top = .95)
 
 fig.legend(loc = "center", bbox_to_anchor = (.75,.22),ncol = 1, frameon = False)
 fig.text(0.5, 0.01, 'Time', ha='center', va='center')
