@@ -27,7 +27,7 @@ names = np.array(data.columns[1:])
 
 out_e = list()
 out_s = list()
-out
+
 
 for i in npe:
     sube = dat[p_e == i, names == "te"]

@@ -63,7 +63,7 @@ e_surp = np.array(magn_badarea)/np.array(size_badarea)
 # esurp_max =
 e_surp[0] = 0 # because division through 0 but in reality it is 0
 plt.plot(npe, e_surp)
-plt.plot(npe, avg_st)
+plt.plot(npe, avg_st, "--")
 # plt.plot(npe, magn_badarea, linestyle = "--")
 # plt.plot(npe, size_badarea, linestyle = "-.")
 plt.xlabel("p_e")
