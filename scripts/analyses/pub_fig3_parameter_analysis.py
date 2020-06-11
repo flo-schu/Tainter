@@ -3,6 +3,7 @@
 
 import numpy as np
 from matplotlib import pyplot as plt
+from scipy import stats as st
 import matplotlib as mpl
 import pandas as pd
 import sys
@@ -48,6 +49,9 @@ names = np.append(names,"tediff")
 
 out_e  = list()
 out_s  = list()
+out_s_conf = list()
+out_e_conf = list()
+out_ed_conf = list()
 
 for i in npe:
     sube  = dat[p_e == i, names == "te"]
@@ -55,6 +59,13 @@ for i in npe:
     subed = dat[p_e == i, names == "tediff"]
     out_e.append(np.mean(sube))
     out_s.append(np.mean(subs))
+    out_s_conf.append(st.t.interval(0.99, df=len(subs)-1,
+                                    loc = np.mean(subs), scale = st.sem(subs)))
+    out_e_conf.append(st.t.interval(0.99, df=len(sube)-1,
+                                    loc = np.mean(sube), scale = st.sem(sube)))
+
+
+print(out_e_conf)
 
 mysub = dat[:,names == "tediff"] < 0
 comp = dat[mysub[:,0], : ]
@@ -66,6 +77,9 @@ for i in npe:
     te = comp[comp[:,names == "p_e"][:,0] == i, names == "tediff"]
     size_badarea.append(len(te))
     magn_badarea.append(np.sum(te)/-10000)
+    out_ed_conf.append(st.t.interval(0.99, df=len(te)-1,
+                                     loc = np.sum(te)/-10000,
+                                     scale = st.sem(te)))
     # avg_st.append(st*-1)
 
 
@@ -161,19 +175,28 @@ im = f1_ax6.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
 # plot st and te over p_e ------------------------------------------------------
 f1_ax7 = f1.add_subplot(gs[1, 0:2])
 f1_ax7.plot(npe, out_s, label = "survival")
+f1_ax7.fill_between(npe, [x[0] for x in out_s_conf], [x[1] for x in out_s_conf],
+                    alpha = .5)
 f1_ax7.set_xlabel("$p_e$")
+# f1_ax7.set_ylim(np.min(out_s)*0.9, np.max(out_s)*1.1)
 # f1.text(x = .48, y = 0.01, s= "exploration probability ($p_e$)", ha = "center")
 # f1_ax7.set_ylabel("mean survival time")
 f1_ax7.legend(frameon = False)
 
 f1_ax8 = f1.add_subplot(gs[1, 2:4])
 f1_ax8.plot(npe, out_e, label = "energy")
+f1_ax8.fill_between(npe, [x[0] for x in out_e_conf], [x[1] for x in out_e_conf],
+                    alpha = .5)
 f1_ax8.set_xlabel("$p_e$")
 # f1_ax8.set_ylabel("mean energy production  ")
 f1_ax8.legend(frameon = False)
 
 f1_ax9 = f1.add_subplot(gs[1,4:6])
 f1_ax9.plot(npe,magn_badarea, label = "magnitude of redarea")
+f1_ax9.fill_between(npe,
+                    [x[0] for x in out_ed_conf],
+                    [x[1] for x in out_ed_conf],
+                    alpha = .5)
 f1_ax9.set_xlabel("$p_e$")
 f1_ax9.legend(frameon = False)
 
