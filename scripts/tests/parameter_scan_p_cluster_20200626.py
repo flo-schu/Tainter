@@ -49,18 +49,18 @@ def get_timeseries(timestep, tmax, initial_value, rho, phi):
     r.set_integrator("vode")
 
     t = [0]
-    results = [initial_value]
+    results = np.array([initial_value])
 
     while r.t < tmax and r.successful():
         r.integrate(r.t+timestep)
         t.append(r.t)
-        results.append(r.y)
+        results = np.append(results,r.y)
 
     return t, results
 
 # folder = "20190419_1134"
-folder = "20200625_1630"
-os.makedirs("../../results/model/"+folder)
+folder = "20200625_16302"
+  # os.makedirs("../../results/model/"+folder)
 rho     = np.linspace(0,0.3,51 )  # link density in erdos renyi network
 phi     = np.linspace(1,1.5,51)   # efficiency of coordinated Workers
 # pe_range= np.logspace(np.log10(0.0001),np.log10(.02),21)
@@ -87,14 +87,13 @@ for p_e in pe_range:
     for i in pargrid:
         rho_i, phi_i = i[0], i[1]
         t, x = get_timeseries(1, 10000, 0, rho_i, phi_i)
-
         e = f_e(np.array(x),N,rho_i, phi_i)
         te = trapz(e,t)
         rho_par.append(rho_i)
         phi_par.append(phi_i)
         pe_par.append(p_e)
 
-        te_data.append(te[0])
+        te_data.append(te)
         s_data.append(t[-1])
         print(p_e, i, "of",np.max(pe_range), np.max(rho), np.max(phi))
 
