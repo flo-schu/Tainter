@@ -4,14 +4,14 @@ import itertools as it
 import math
 
 # params
-rho = np.linspace(0, 0.3, 11)  # link density in erdos renyi network
-phi = np.linspace(1, 1.5, 11)  # efficiency of coordinated Workers
+rho = np.linspace(0, 0.3, 51)  # link density in erdos renyi network
+phi = np.linspace(1, 1.5, 51)  # efficiency of coordinated Workers
 pe_null = np.array([0])
-pe_explore = np.logspace(-4, -1.6, num=11)
+pe_explore = np.logspace(-4, -1.6, num=51)
 p_e = np.concatenate((pe_null, pe_explore), axis=None)
 
 # chunks
-n = 10
+n = 1000
 n_pargrid = len(rho) * len(phi) * len(p_e)
 n_chunks = math.ceil(n_pargrid / n)
 
@@ -23,7 +23,7 @@ for chunk in range(n_chunks):
     lower_slice = chunk * n
     upper_slice = min((chunk + 1) * n, n_pargrid)
     np.savetxt(
-        "params/chunk_"+str(chunk)+".txt",
+        "params/chunk_"+str(chunk+1)+".txt",
         pargrid[lower_slice:upper_slice],
         delimiter=",", newline="\n"
     )
