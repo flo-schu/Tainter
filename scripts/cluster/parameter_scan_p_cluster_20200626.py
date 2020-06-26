@@ -1,18 +1,13 @@
 import numpy as np
 import scipy.stats as sci
-from scipy.optimize import fsolve
-from matplotlib import pyplot as plt
 import pandas as pd
-import os as os
 from scipy.integrate import ode
 from scipy.integrate import trapz
 import itertools as it
-# os.chdir("./Tainter/Models/tf5_cluster")
 
 
 # Parameters ###################################################################
 N   = 400       # Network size
-
 epsilon = 1     # threshold
 beta    = 15    # scale parameter of beta distribution
 alpha   = 1     # location parameter of beta distribution
@@ -57,21 +52,6 @@ def get_timeseries(timestep, tmax, initial_value, rho, phi):
         results = np.append(results,r.y)
 
     return t, results
-
-# folder = "20190419_1134"
-folder = "20200625_16302"
-  # os.makedirs("../../results/model/"+folder)
-rho     = np.linspace(0,0.3,51 )  # link density in erdos renyi network
-phi     = np.linspace(1,1.5,51)   # efficiency of coordinated Workers
-# pe_range= np.logspace(np.log10(0.0001),np.log10(.02),21)
-pe_explore = np.logspace(-4,-1.6,num = 51)
-pe_null = np.array([0])
-
-pe_range = np.concatenate((pe_null, pe_explore), axis=None)
-pargrid = it.product(rho, phi)
-
-print(pe_range)
-input("press enter")
 
 t_data = list()
 x_data = list()
