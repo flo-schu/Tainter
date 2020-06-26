@@ -1,3 +1,5 @@
+import sys
+import csv
 import numpy as np
 import scipy.stats as sci
 import pandas as pd
@@ -5,14 +7,20 @@ from scipy.integrate import ode
 from scipy.integrate import trapz
 import itertools as it
 
-# Parameters ###################################################################
+# environmental variables -----------------------------------------------------
+paramfile = sys.argv[1]
+output_dir = sys.argv[2]
+njob = int(sys.argv[3])
+
+# Parameters ------------------------------------------------------------------
 N = 400  # Network size
 epsilon = 1  # threshold
 beta = 15  # scale parameter of beta distribution
 alpha = 1  # location parameter of beta distribution
+# p_e, rho, phi
+params = np.loadtxt(paramfile, delimiter=",")
 
-
-# Definition Equations #########################################################
+# Definition Equations --------------------------------------------------------
 def f_a(t, x, N, p_e, epsilon, rho, phi, beta, alpha):
     return (
             p_e * (N - 2 * x) +
@@ -39,8 +47,8 @@ def f_e(x, N, rho, phi):
     )
 
 
-# Solver #######################################################################
-def get_timeseries(timestep, tmax, initial_value, rho, phi):
+# Solver ----------------------------------------------------------------------
+def get_timeseries(timestep, tmax, initial_value, p_e, rho, phi):
     r = ode(f_a)
     r.set_initial_value(initial_value)
     r.set_f_params(N, p_e, epsilon, rho, phi, beta, alpha)
@@ -57,30 +65,18 @@ def get_timeseries(timestep, tmax, initial_value, rho, phi):
     return t, results
 
 
-t_data = list()
-x_data = list()
-te_data = list()
-rho_par = list()
-phi_par = list()
-pe_par = list()
-s_data = list()
+data = []
 
-for p_e in pe_range:
-    print(p_e)
-    pargrid = it.product(rho, phi)
-    for i in pargrid:
-        rho_i, phi_i = i[0], i[1]
-        t, x = get_timeseries(1, 10000, 0, rho_i, phi_i)
-        e = f_e(np.array(x), N, rho_i, phi_i)
-        te = trapz(e, t)
-        rho_par.append(rho_i)
-        phi_par.append(phi_i)
-        pe_par.append(p_e)
+for i in range(len(params)):
+    par = params[i]
+    print(par)
+    p_e, rho, phi = par[0], par[1], par[2]
+    t, x = get_timeseries(1, 10000, 0, p_e, rho, phi)
+    e = f_e(np.array(x), N, rho, phi)
+    te = trapz(e, t)
+    st = t[-1]
+    data.append(np.array([p_e, rho, phi, te, st]))
 
-        te_data.append(te)
-        s_data.append(t[-1])
-        print(p_e, i, "of", np.max(pe_range), np.max(rho), np.max(phi))
-
-data = pd.DataFrame(np.array([pe_par, phi_par, rho_par, te_data, s_data]).transpose())
-data.columns = ["p_e", "phi", "rho", "te", "s"]
-data.to_csv("../../results/model/" + folder + "/parscan.csv")
+data = np.array(data)
+np.savetxt(output_dir+"/chunk_"+str(njob)+".txt", data,
+           delimiter=",", newline="\n")
