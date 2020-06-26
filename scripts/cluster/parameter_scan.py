@@ -61,6 +61,9 @@ phi_par = list()
 pe_par  = list()
 s_data = list()
 
+
+
+
 for p_e in pe_range:
     print(p_e)
     pargrid = it.product(rho, phi)
