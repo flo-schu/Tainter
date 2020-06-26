@@ -59,11 +59,11 @@ def get_timeseries(timestep, tmax, initial_value, rho, phi):
     return t, results
 
 # folder = "20190419_1134"
-folder = "20191025_1217"
+folder = "20200625_1350"
 
 
-rho     = np.linspace(0,0.1,101)  # link density in erdos renyi network
-phi     = np.linspace(1,1.5,101)   # efficiency of coordinated Workers
+rho     = np.linspace(0,0.3,11)  # link density in erdos renyi network
+phi     = np.linspace(1,1.5,11)   # efficiency of coordinated Workers
 pargrid = it.product(rho, phi)
 
 t_data = list()
