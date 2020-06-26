@@ -12,6 +12,8 @@ paramfile = sys.argv[1]
 output_dir = sys.argv[2]
 njob = int(sys.argv[3])
 
+print(paramfile)
+
 # Parameters ------------------------------------------------------------------
 N = 400  # Network size
 epsilon = 1  # threshold
