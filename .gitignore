@@ -12,3 +12,5 @@
 *.csv
 *.txt
 *.pickle
+/venv/
+/.idea/
