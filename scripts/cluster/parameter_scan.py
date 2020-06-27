@@ -1,11 +1,8 @@
 import sys
-import csv
 import numpy as np
 import scipy.stats as sci
-import pandas as pd
 from scipy.integrate import ode
 from scipy.integrate import trapz
-import itertools as it
 
 # environmental variables -----------------------------------------------------
 paramfile = sys.argv[1]
