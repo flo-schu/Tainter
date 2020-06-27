@@ -1,3 +1,16 @@
+# created by Florian Schunck on 26.06.2020
+# Project: tainter
+# Short description of the feature:
+# 1. parameter analysis of the exploration, link density and output elasticity
+#    by approximated analytic equations.
+# 2. can take arguments from call on EVE cluster from bash script and outputs
+#    results in chunks which can then be collected afterwards.
+# ------------------------------------------------------------------------------
+# Open tasks:
+# TODO:
+#
+# ------------------------------------------------------------------------------
+
 import sys
 import numpy as np
 import scipy.stats as sci

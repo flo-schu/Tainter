@@ -1,4 +1,17 @@
-import csv
+# created by Florian Schunck on 26.06.2020
+# Project: tainter
+# Short description of the feature:
+# 1. create a parameter grid and save it to chunks of size n. The last chunk
+#    contains the tailing elements and can be smaller than n.
+# 2. allows to create one chunk for each parameter combination or one chunk
+#    with all combination or any number in between
+#
+# ------------------------------------------------------------------------------
+# Open tasks:
+# TODO:
+#
+# ------------------------------------------------------------------------------
+
 import numpy as np
 import itertools as it
 import math
@@ -11,11 +24,13 @@ pe_explore = np.logspace(-4, -1.6, num=51)
 p_e = np.concatenate((pe_null, pe_explore), axis=None)
 
 # chunks
-n = 1000
 n_pargrid = len(rho) * len(phi) * len(p_e)
+# choose n_pargrid if only one chunk should be computed,
+# choose 1 if n chunks should be created
+n = 1000
 n_chunks = math.ceil(n_pargrid / n)
 
-# paramter grid
+# parameter grid
 pargrid = np.array(list(it.product(p_e, rho, phi)))
 
 # save paramter chunks
