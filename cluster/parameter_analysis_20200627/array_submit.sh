@@ -16,18 +16,7 @@ source activate .conda/envs/tainter
 
 echo "processing chunk $SGE_TASK_ID ..."
 
-PARFILE=./tainter/parameter_analysis_20200626/params/chunk_$SGE_TASK_ID.txt
-SCRIPTFILE=./tainter/parameter_analysis_20200626/parameter_scan.py
-if test -f "$PARFILE"; then
-    echo "$PARFILE exists."
-fi
-if test -f "$SCRIPTFILE"; then
-    echo "$SCRIPTFILE exists."
-fi
-
-echo "..."
-
-python ./tainter/parameter_analysis_20200626/parameter_scan.py "./tainter/parameter_analysis_20200626/params/chunk_$SGE_TASK_ID.txt" "$output_dir" "$SGE_TASK_ID"
+python ./tainter/parameter_analysis_20200627/parameter_scan.py "./tainter/parameter_analysis_20200627/params/chunk_$SGE_TASK_ID.txt" "$output_dir" "$SGE_TASK_ID"
 
 echo "chunk successfully executed"
 source deactivate

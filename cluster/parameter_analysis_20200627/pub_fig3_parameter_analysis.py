@@ -18,17 +18,17 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy import stats as st
 
-sys.path.append('../helpers/')
+sys.path.append('../../scripts/helpers/')
 from shifted_cmap import shiftedColorMap
 
 # data input and processing for upper subplots ---------------------------------
 
-folder = "parameter_analysis_20200626"
+folder = "parameter_analysis_20200627"
 data = np.loadtxt("../../cluster/" + folder + "/output.txt",
                   delimiter=",", skiprows=1)
 colnames = np.array(["p_e", "rho", "phi", "te", "st"])
 
-data = data[np.lexsort((data[:, 2], data[:, 1], data[:, 0]))]
+# data = data[np.lexsort((data[:, 2], data[:, 1], data[:, 0]))]
 
 p_e = data[:, 0]
 rho = data[:, 1]
@@ -115,6 +115,7 @@ im = f1_ax1.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    vmin=epmin, vmax=epmax)
 f1_ax1.set_ylabel("efficiency ($\\phi$)")
 f1_ax1.set_xlabel(" ", horizontalalignment="right")
+f1_ax1.set_xscale('log')
 f1.text(x=.2, y=.52, s="link density ($\\rho$)", ha="center")
 
 f1_ax2 = f1.add_subplot(gs[0, 1], sharey=f1_ax1)
@@ -126,6 +127,8 @@ grid = np.flipud(grid.T)
 im = f1_ax2.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    aspect="auto", interpolation="nearest", cmap=shifted_cmap,
                    vmin=epmin, vmax=epmax)
+f1_ax2.set_xscale('log')
+
 
 f1_ax3 = f1.add_subplot(gs[0, 2], sharey=f1_ax1)
 grid = dat[p_e == p_e[np.searchsorted(p_e, 0.00, side="right")],
@@ -134,6 +137,7 @@ grid = np.flipud(grid.T)
 im = f1_ax3.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    aspect="auto", interpolation="nearest", cmap=shifted_cmap,
                    vmin=epmin, vmax=epmax)
+f1_ax3.set_xscale('log')
 f1_ax3.set_ylabel("efficiency ($\\phi$)")
 f1.text(x=.52, y=.52, s="link density ($\\rho$)", ha="center")
 
@@ -144,6 +148,8 @@ grid = np.flipud(grid.T)
 im = f1_ax4.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    aspect="auto", interpolation="nearest", cmap=shifted_cmap,
                    vmin=epmin, vmax=epmax)
+f1_ax4.set_xscale('log')
+
 
 f1_ax5 = f1.add_subplot(gs[0, 4], sharey=f1_ax1)
 grid = dat[p_e == p_e[np.searchsorted(p_e, 0.00275)],
@@ -153,6 +159,8 @@ im = f1_ax5.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    aspect="auto", interpolation="nearest", cmap=shifted_cmap,
                    vmin=epmin, vmax=epmax)
 f1_ax5.set_ylabel("efficiency ($\\phi$)")
+f1_ax5.set_xscale('log')
+
 f1.text(x=.85, y=.52, s="link density ($\\rho$)", ha="center")
 # f1_ax5.text(x = max(nrho)*.7, y = max(nphi)*.92,
 #             s = str(np.round(np.log10(i),1)),
@@ -165,6 +173,8 @@ grid = np.flipud(grid.T)
 im = f1_ax6.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    aspect="auto", interpolation="nearest", cmap=shifted_cmap,
                    vmin=epmin, vmax=epmax)
+f1_ax6.set_xscale('log')
+
 # f1_ax6.text(x = max(nrho)*.7, y = max(nphi)*.92,
 #             s = str(np.round(np.log10(i),1)),
 #             fontsize = 8)
@@ -181,6 +191,8 @@ f1_ax7.plot(npe, out_s, label="survival")
 f1_ax7.fill_between(npe, [x[0] for x in out_s_conf], [x[1] for x in out_s_conf],
                     alpha=.5)
 f1_ax7.set_xlabel("$p_e$")
+f1_ax7.set_xscale('log')
+
 # f1_ax7.set_ylim(np.min(out_s)*0.9, np.max(out_s)*1.1)
 # f1.text(x = .48, y = 0.01, s= "exploration probability ($p_e$)", ha = "center")
 # f1_ax7.set_ylabel("mean survival time")
@@ -191,6 +203,8 @@ f1_ax8.plot(npe, out_e, label="energy")
 f1_ax8.fill_between(npe, [x[0] for x in out_e_conf], [x[1] for x in out_e_conf],
                     alpha=.5)
 f1_ax8.set_xlabel("$p_e$")
+f1_ax8.set_xscale('log')
+
 # f1_ax8.set_ylabel("mean energy production  ")
 f1_ax8.legend(frameon=False)
 
@@ -201,6 +215,7 @@ f1_ax9.fill_between(npe,
                     [x[1] for x in out_ed_conf],
                     alpha=.5)
 f1_ax9.set_xlabel("$p_e$")
+f1_ax9.set_xscale('log')
 f1_ax9.legend(frameon=False)
 
 # remove ticklabels from y axis in gridplots
