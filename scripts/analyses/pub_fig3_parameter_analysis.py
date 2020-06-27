@@ -1,5 +1,15 @@
-#TODO: add lines fopr p_e values displayed in grids
-
+# created by Florian Schunck in December 2019
+# Project: tainter
+# Short description of the feature:
+# 1. create Plot 4 for publication. The plot displays the paramter grids in
+#    terms of survival time and energy production and contrasts p_e=0 und p_e>0
+#    to illustrate divergent model outcomes dependent on the degree of
+#    exploration
+# ------------------------------------------------------------------------------
+# Open tasks:
+# TODO: add lines for p_e values displayed in grids
+#
+# ------------------------------------------------------------------------------
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -13,8 +23,10 @@ from shifted_cmap import shiftedColorMap
 # data input and processing for upper subplots #################################
 
 
-folder = "20191027_0101"
+# folder = "20191027_0101" # model run for first paper draft (rho[0,1], p_E[low resolution
 # folder = "20191112_0937"
+# folder = "20200625_1350" # model for second paper draft (log scale for pe, link density (rho) only until .3)
+folder = "20200625_1615"
 
 data   = pd.read_csv("../../results/model/"+folder+"/parscan.csv")
 # data   = pd.read_csv("../../results/model/"+folder+"/parscan_plus_p0.csv")
