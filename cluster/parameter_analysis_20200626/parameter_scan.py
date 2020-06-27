@@ -22,7 +22,7 @@ paramfile = sys.argv[1]
 output_dir = sys.argv[2]
 njob = int(sys.argv[3])
 
-print(paramfile)
+print(paramfile, output_dir, njob)
 
 # Parameters ------------------------------------------------------------------
 N = 400  # Network size
@@ -31,6 +31,7 @@ beta = 15  # scale parameter of beta distribution
 alpha = 1  # location parameter of beta distribution
 # p_e, rho, phi
 params = np.loadtxt(paramfile, delimiter=",")
+
 
 # Definition Equations --------------------------------------------------------
 def f_a(t, x, N, p_e, epsilon, rho, phi, beta, alpha):
@@ -81,7 +82,6 @@ data = []
 
 for i in range(len(params)):
     par = params[i]
-    print(par)
     p_e, rho, phi = par[0], par[1], par[2]
     t, x = get_timeseries(1, 10000, 0, p_e, rho, phi)
     e = f_e(np.array(x), N, rho, phi)
@@ -90,5 +90,7 @@ for i in range(len(params)):
     data.append(np.array([p_e, rho, phi, te, st]))
 
 data = np.array(data)
-np.savetxt(output_dir+"/chunk_"+str(njob)+".txt", data,
+np.savetxt(output_dir + "/chunk_" + str(njob).zfill(3) + ".txt", data,
            delimiter=",", newline="\n")
+
+print("python script executed correctly.")
