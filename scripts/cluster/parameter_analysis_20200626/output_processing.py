@@ -22,7 +22,5 @@ for i in range(len(output_files)):
     chunk = np.loadtxt("./output/"+output_files[i], delimiter=",", ndmin=2)
     output = np.concatenate((output, chunk), axis=0)
 
-print(output)
-
 colnames = "p_e, rho, phi, te, st"
 np.savetxt("./output.txt", output, header=colnames, delimiter=",", newline="\n")
