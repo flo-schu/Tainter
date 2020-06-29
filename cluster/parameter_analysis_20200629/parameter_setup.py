@@ -17,7 +17,7 @@ import itertools as it
 import math
 
 # params
-rho = np.logspace(-1.05, -0.3, 100)  # link density in erdos renyi network
+rho = np.linspace(0, 0.3, 100)  # link density in erdos renyi network
 phi = np.linspace(1, 1.5, 100)  # efficiency of coordinated Workers
 pe_null = np.array([0])
 pe_explore = np.logspace(-4, -1.6, num=99)

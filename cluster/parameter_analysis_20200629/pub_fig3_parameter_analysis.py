@@ -89,8 +89,9 @@ for i in npe:
 # PLOT #########################################################################
 
 # better colorbar --------------------------------------------------------------
-epmin = np.min(dat[:, colnames == "tediff"])
-epmax = np.max(dat[:, colnames == "tediff"])
+te_diff = dat[:, colnames == "tediff"]
+epmin = np.min(te_diff[~np.isnan(te_diff)])
+epmax = np.max(te_diff[~np.isnan(te_diff)])
 orig_cmap = mpl.cm.RdBu
 midpoint = np.absolute(epmin) / (epmax - epmin)
 shifted_cmap = shiftedColorMap(orig_cmap, midpoint=midpoint, name='shiftedcmap')
@@ -114,7 +115,7 @@ im = f1_ax1.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    vmin=epmin, vmax=epmax)
 f1_ax1.set_ylabel("efficiency ($\\phi$)")
 f1_ax1.set_xlabel(" ", horizontalalignment="right")
-f1_ax1.set_xscale('log')
+# f1_ax1.set_xscale('log')
 f1.text(x=.2, y=.52, s="link density ($\\rho$)", ha="center")
 
 f1_ax2 = f1.add_subplot(gs[0, 1], sharey=f1_ax1)
@@ -126,7 +127,7 @@ grid = np.flipud(grid.T)
 im = f1_ax2.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    aspect="auto", interpolation="nearest", cmap=shifted_cmap,
                    vmin=epmin, vmax=epmax)
-f1_ax2.set_xscale('log')
+# f1_ax2.set_xscale('log')
 
 
 f1_ax3 = f1.add_subplot(gs[0, 2], sharey=f1_ax1)
@@ -136,7 +137,7 @@ grid = np.flipud(grid.T)
 im = f1_ax3.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    aspect="auto", interpolation="nearest", cmap=shifted_cmap,
                    vmin=epmin, vmax=epmax)
-f1_ax3.set_xscale('log')
+# f1_ax3.set_xscale('log')
 f1_ax3.set_ylabel("efficiency ($\\phi$)")
 f1.text(x=.52, y=.52, s="link density ($\\rho$)", ha="center")
 
@@ -147,7 +148,7 @@ grid = np.flipud(grid.T)
 im = f1_ax4.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    aspect="auto", interpolation="nearest", cmap=shifted_cmap,
                    vmin=epmin, vmax=epmax)
-f1_ax4.set_xscale('log')
+# f1_ax4.set_xscale('log')
 
 
 f1_ax5 = f1.add_subplot(gs[0, 4], sharey=f1_ax1)
@@ -158,7 +159,7 @@ im = f1_ax5.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    aspect="auto", interpolation="nearest", cmap=shifted_cmap,
                    vmin=epmin, vmax=epmax)
 f1_ax5.set_ylabel("efficiency ($\\phi$)")
-f1_ax5.set_xscale('log')
+# f1_ax5.set_xscale('log')
 
 f1.text(x=.85, y=.52, s="link density ($\\rho$)", ha="center")
 # f1_ax5.text(x = max(nrho)*.7, y = max(nphi)*.92,
@@ -172,7 +173,7 @@ grid = np.flipud(grid.T)
 im = f1_ax6.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    aspect="auto", interpolation="nearest", cmap=shifted_cmap,
                    vmin=epmin, vmax=epmax)
-f1_ax6.set_xscale('log')
+# f1_ax6.set_xscale('log')
 
 # f1_ax6.text(x = max(nrho)*.7, y = max(nphi)*.92,
 #             s = str(np.round(np.log10(i),1)),
@@ -223,5 +224,5 @@ plt.setp(f1_ax4.get_yticklabels(), visible=False)
 plt.setp(f1_ax6.get_yticklabels(), visible=False)
 # plt.yscale('log')
 # plt.xscale('log')
-plt.savefig("pub_figure4.pdf")
+# plt.savefig("pub_figure4.pdf")
 plt.show()
