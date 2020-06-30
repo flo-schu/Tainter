@@ -18,13 +18,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy import stats as st
 
-sys.path.append('../helpers/')
+sys.path.append('../../scripts/helpers/')
 from shifted_cmap import shiftedColorMap
 
 # data input and processing for upper subplots ---------------------------------
 
-folder = "parameter_analysis_20200626"
-data = np.loadtxt("../../cluster/" + folder + "/output.txt",
+data = np.loadtxt("output.txt",
                   delimiter=",", skiprows=1)
 colnames = np.array(["p_e", "rho", "phi", "te", "st"])
 
