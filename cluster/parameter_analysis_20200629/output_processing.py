@@ -16,7 +16,7 @@ import os
 # for type checking for better debugging and later code analysis.
 
 params_files = os.listdir("params/")
-output_files = os.listdir("output/")  # returns list of files
+output_files = os.listdir("output2/")  # returns list of files
 
 if len(params_files) == len(output_files):
     pass
@@ -26,7 +26,7 @@ else:
 output = np.ndarray(shape=(0, 5))
 for i in range(len(output_files)):
     print(output_files[i])
-    chunk = np.loadtxt("./output/"+output_files[i], delimiter=",", ndmin=2)
+    chunk = np.loadtxt("./output2/"+output_files[i], delimiter=",", ndmin=2)
     output = np.concatenate((output, chunk), axis=0)
 
 colnames = "p_e, rho, phi, te, st"
