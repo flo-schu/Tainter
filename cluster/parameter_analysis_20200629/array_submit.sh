@@ -16,7 +16,7 @@ source activate .conda/envs/tainter
 
 echo "processing chunk $SGE_TASK_ID ..."
 
-python ./tainter/parameter_analysis_20200627_2/parameter_scan.py "./tainter/parameter_analysis_20200627_2/params/chunk_$SGE_TASK_ID.txt" "$output_dir" "$SGE_TASK_ID"
+python ./tainter/parameter_analysis_20200629/parameter_scan.py "./tainter/parameter_analysis_20200629/params/chunk_$SGE_TASK_ID.txt" "$output_dir" "$SGE_TASK_ID"
 
 echo "chunk successfully executed"
 source deactivate
