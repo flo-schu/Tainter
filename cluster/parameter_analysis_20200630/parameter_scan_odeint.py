@@ -16,14 +16,13 @@ import numpy as np
 import scipy.stats as sci
 from scipy.integrate import odeint
 from scipy.integrate import trapz
-import matplotlib.pyplot as plt
 
 # environmental variables -----------------------------------------------------
 paramfile = sys.argv[1]
 output_dir = sys.argv[2]
 njob = int(sys.argv[3])
 
-# print(paramfile, output_dir, njob)
+print(paramfile, output_dir, njob)
 
 # Parameters ------------------------------------------------------------------
 N = 400  # Network size
@@ -34,17 +33,18 @@ alpha = 1  # location parameter of beta distribution
 params = np.loadtxt(paramfile, delimiter=",")
 
 
-# print(params)
-
-
 # Definition Equations --------------------------------------------------------
-def f_a(t, x, N, p_e, epsilon, rho, phi, beta, alpha):
-    return (
-        p_e * (N - 2 * x) + sci.beta.cdf(
-        (((epsilon * N) / (((N - x) * (1 - rho) ** x) +
-        ((N - x) * (1 - (1 - rho) ** x)) ** phi))),
-        a=beta, b=alpha)
-    )
+def f_a(x, t, N, p_e, epsilon, rho, phi, beta, alpha):
+    if x >= N:
+        return 0
+    else:
+        return (
+                p_e * (N - 2 * x) +
+                sci.beta.cdf(
+                    (((epsilon * N) / (((N - x) * (1 - rho) ** x) +
+                                       ((N - x) * (1 - (1 - rho) ** x)) ** phi))),
+                    a=beta, b=alpha)
+        )
 
 
 def f_e(x, N, rho, phi):
@@ -54,28 +54,28 @@ def f_e(x, N, rho, phi):
 
 
 def get_st(t, e):
-    return t[e <= 0]
+    if all(e) > 0:
+        return np.max(t)
+    else:
+        return t[e == 0][0]
 
 
-t = np.linspace(0, 10000, 10000)
+t = np.linspace(0, 10000, 10001)
 data = []
 
 for i in range(len(params)):
-    print(i)
     par = params[i]
     p_e, rho, phi = par[0], par[1], par[2]
-    x = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha))
-    e = f_e(np.array(x[:, 0]), N, rho, phi)
-    print(e)
-    plt.plot(t, x / N, label="admin")
-    plt.plot(t, e, label="energy")
-    plt.legend()
-    plt.show()
+    result, info = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha),
+                          full_output=True)
+    result[result > N] = N  # turn all x > N to N (fix numerical issue)
+    e = f_e(result[:, 0], N, rho, phi)
     te = trapz(e, t)
-    st = get_st(t, e)[0]
+    st = get_st(t, e)
 
-    data.append(np.array([p_e, rho, phi, te, st]))
-    print("pe, rho, phi: ", par, " -- st: ", st, " -- te: ", te)
+    data.append(np.array([p_e, rho, phi, te, st, np.min(e)]))
+    print("#", str(i).zfill(5), "| pe, rho, phi:", np.round(par, 3), "-- st:", st,
+          "-- te:", np.round(te,0), "-- min_e:", np.round(np.min(e),2), flush=True)
 
 data = np.array(data)
 np.savetxt(output_dir + "/chunk_" + str(njob).zfill(4) + ".txt", data,
