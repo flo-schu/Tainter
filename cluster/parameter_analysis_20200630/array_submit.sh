@@ -3,7 +3,7 @@
 #$ -S /bin/bash
 #$ -wd /home/schunckf
 #$ -N tainter
-#$ -l h_rt=02:00:00
+#$ -l h_rt=00:30:00
 #$ -l h_vmem=1G
 #$ -o /work/$USER/$JOB_NAME/$JOB_ID/log_$TASK_ID.txt
 #$ -j y
@@ -16,7 +16,7 @@ source activate .conda/envs/tainter
 
 echo "processing chunk $SGE_TASK_ID ..."
 
-python ./tainter/parameter_analysis_20200630/parameter_scan.py "./tainter/parameter_analysis_20200630/params/chunk_$SGE_TASK_ID.txt" "$output_dir" "$SGE_TASK_ID"
+python -W ignore ./tainter/parameter_analysis_20200630/parameter_scan_odeint.py "./tainter/parameter_analysis_20200630/params/chunk_$SGE_TASK_ID.txt" "$output_dir" "$SGE_TASK_ID"
 
 echo "chunk successfully executed"
 source deactivate
