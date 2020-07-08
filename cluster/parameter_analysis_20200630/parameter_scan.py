@@ -32,7 +32,7 @@ alpha = 1  # location parameter of beta distribution
 # p_e, rho, phi
 params = np.loadtxt(paramfile, delimiter=",")
 
-
+print(params)
 # Definition Equations --------------------------------------------------------
 def f_a(t, x, N, p_e, epsilon, rho, phi, beta, alpha):
     return (
@@ -69,8 +69,9 @@ def get_timeseries(timestep, tmax, initial_value, p_e, rho, phi):
 
     t = [0]
     results = np.array([initial_value])
-
     while r.t < tmax and r.successful():
+        print(r.t)
+
         r.integrate(r.t + timestep)
         t.append(r.t)
         results = np.append(results, r.y)
@@ -81,13 +82,18 @@ def get_timeseries(timestep, tmax, initial_value, p_e, rho, phi):
 data = []
 
 for i in range(len(params)):
+    print(i)
     par = params[i]
+    print(par)
     p_e, rho, phi = par[0], par[1], par[2]
+    print("...")
     t, x = get_timeseries(1, 10000, 0, p_e, rho, phi)
+    print("...")
     e = f_e(np.array(x), N, rho, phi)
     te = trapz(e, t)
     st = t[-1]
     data.append(np.array([p_e, rho, phi, te, st]))
+    print("pe, rho, phi: ", par, " -- st: ", st, " -- te: ", te)
 
 data = np.array(data)
 np.savetxt(output_dir + "/chunk_" + str(njob).zfill(4) + ".txt", data,
