@@ -60,20 +60,44 @@ def get_st(t, e):
         return t[e == 0][0]
 
 
+# Debugging: -------------------------------------------------------------------
+# t = np.linspace(0, 10000, 10001)
+# par = params[0]
+# p_e, rho, phi = par[0], par[1], par[2]
+# result = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha),
+#                 full_output=False)
+# result[result > N] = N  # turn all x > N to N (fix numerical issue)
+# e = f_e(result[:, 0], N, rho, phi)
+# te = trapz(e, t)
+# st = get_st(t, e)
+# print("| pe, rho, phi:", par, "-- st:", st,
+#       "-- te:", np.round(te, 18), "-- min_e:", np.round(np.min(e), 2), flush=True)
+#
+#
+# import matplotlib.pyplot as plt
+# plt.plot(t, result/N, label="a")
+# plt.plot(t, e, label="e")
+# plt.legend()
+# plt.xscale('log')
+# plt.show()
+#
+# input("stop.")
+# ------------------------------------------------------------------------------
+
 t = np.linspace(0, 10000, 10001)
 data = []
 
 for i in range(len(params)):
     par = params[i]
     p_e, rho, phi = par[0], par[1], par[2]
-    result, info = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha),
-                          full_output=True)
+    result = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha),
+                    full_output=False)
     result[result > N] = N  # turn all x > N to N (fix numerical issue)
     e = f_e(result[:, 0], N, rho, phi)
     te = trapz(e, t)
     st = get_st(t, e)
 
-    data.append(np.array([p_e, rho, phi, te, st, np.min(e)]))
+    data.append(np.array([p_e, rho, phi, te, st]))
     print("#", str(i).zfill(5), "| pe, rho, phi:", np.round(par, 3), "-- st:", st,
           "-- te:", np.round(te,0), "-- min_e:", np.round(np.min(e),2), flush=True)
 

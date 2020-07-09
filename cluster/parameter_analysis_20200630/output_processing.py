@@ -39,6 +39,7 @@ output = np.ndarray(shape=(0, 5))
 for i in range(len(output_files)):
     print(output_files[i])
     chunk = np.loadtxt("./output/"+output_files[i], delimiter=",", ndmin=2)
+    chunk = chunk[:, 0:5]
     output = np.concatenate((output, chunk), axis=0)
 
 colnames = "p_e, rho, phi, te, st"
