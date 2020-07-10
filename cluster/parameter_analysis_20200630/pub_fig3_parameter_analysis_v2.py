@@ -5,31 +5,27 @@
 #    terms of survival time and energy production and contrasts p_e=0 und p_e>0
 #    to illustrate divergent model outcomes dependent on the degree of
 #    exploration
+# 2. data is transformed to 4D array which is then subset to get a 2D array
+#    of one outcome variable (st, te, tediff) which is reshaped into
+#    rho * phi (1000 x 100). The resulting output is transposed and flipped
+#    upside down
 # ------------------------------------------------------------------------------
 # Open tasks:
 # TODO: add lines for p_e values displayed in grids
 #
 # ------------------------------------------------------------------------------
 
-import sys
-
-import matplotlib as mpl
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy import stats as st
 
-sys.path.append('../../scripts/helpers/')
-from shifted_cmap import shiftedColorMap
 
 # data input and processing for upper subplots ---------------------------------
-print("hello")
-
-data = np.loadtxt("output.txt",
-                  delimiter=",", skiprows=1)
+print("Hello! Starting import...")
+# data = np.loadtxt("./cluster/parameter_analysis_20200630/output_corrected.txt", delimiter=",", skiprows=1)
+data = np.load("./cluster/parameter_analysis_20200630/output.pkl", allow_pickle=True)
 colnames = np.array(["p_e", "rho", "phi", "te", "st"])
-# data = data[np.lexsort((data[:, 2], data[:, 1], data[:, 0]))]
+print("Import complete")
 
-print("import complete")
 p_e = data[:, 0]
 rho = data[:, 1]
 phi = data[:, 2]
@@ -37,7 +33,9 @@ npe = np.unique(p_e)
 nrho = np.unique(rho)
 nphi = np.unique(phi)
 
+print("import complete")
 print(len(data), len(npe), len(nrho), len(nphi))
+
 
 # recycle pe=0 over all unique pe values and add column to the end of the array
 te_0 = np.tile(data[p_e == 0, colnames == "te"], len(npe))
@@ -45,185 +43,62 @@ dat = np.column_stack((data, te_0))  # append a 1d array to a 2d array (via colu
 colnames = np.append(colnames, "te0")
 
 # calculate difference of pe0 and peX and add column to the end of the array
-te_diff = dat[:, colnames == "te"] - dat[:, colnames == "te0"]
+te_diff = (dat[:, colnames == "te"] - dat[:, colnames == "te0"]).squeeze()
 dat = np.column_stack((dat, te_diff))
 colnames = np.append(colnames, "tediff")
 
+# remove te0 column
+dat = dat[:, colnames != "te0"]
+colnames = colnames[colnames != "te0"]
 print(colnames, '\n', dat)
 
-# data input and processing for lower subplots #################################
-
-out_e = list()
-out_s = list()
-out_s_conf = list()
-out_e_conf = list()
-out_ed_conf = list()
-
-for i in npe:
-    sube = dat[p_e == i, colnames == "te"]
-    subs = dat[p_e == i, colnames == "st"]
-    subed = dat[p_e == i, colnames == "tediff"]
-    out_e.append(np.mean(sube))
-    out_s.append(np.mean(subs))
-    out_s_conf.append(st.t.interval(0.99, df=len(subs) - 1,
-                                    loc=np.mean(subs), scale=st.sem(subs)))
-    out_e_conf.append(st.t.interval(0.99, df=len(sube) - 1,
-                                    loc=np.mean(sube), scale=st.sem(sube)))
-
-print(out_e_conf)
-
-mysub = dat[:, colnames == "tediff"] < 0
-comp = dat[mysub[:, 0], :]
-
-size_badarea = list()
-magn_badarea = list()
-
-for i in npe:
-    te = comp[comp[:, colnames == "p_e"][:, 0] == i, colnames == "tediff"]
-    size_badarea.append(len(te))
-    magn_badarea.append(np.sum(te) / -10000)
-    out_ed_conf.append(st.t.interval(0.99, df=len(te) - 1,
-                                     loc=np.sum(te) / -10000,
-                                     scale=st.sem(te)))
-    # avg_st.append(st*-1)
+# reshape data to array of 4 dimensions (one for each parameter and one for the
+# data entries.
+# access like:
+# a) darr[p_e][rho][phi][colnames]  entries in brackets are replaced by integers
+# b) darr[p_e, rho, phi, colnames]  to select all choose :
+darr = dat.reshape((len(npe),len(nrho),len(nphi),6))
 
 # PLOT #########################################################################
 
-# better colorbar --------------------------------------------------------------
-te_diff = dat[:, colnames == "tediff"]
-epmin = np.min(te_diff[~np.isnan(te_diff)])
-epmax = np.max(te_diff[~np.isnan(te_diff)])
-orig_cmap = mpl.cm.RdBu
-midpoint = np.absolute(epmin) / (epmax - epmin)
-shifted_cmap = shiftedColorMap(orig_cmap, midpoint=midpoint, name='shiftedcmap')
+# parameters
+plot_pe = npe.searchsorted([0, 1e-4, 0.02])  # indices of tested pe values
+labels = {"st": ("A", "B", "C"),
+          "te": ("D", "E", "F")
+          }
 
-# initialize figure ------------------------------------------------------------
-textwidth = 12.12537
-plt.rcParams.update({'font.size': 14})
-# cmap = cm.get_cmap("tab20",20)
+# color ranges
+c_st = darr[plot_pe, :, :, colnames == "st"].flatten()
+c_te = darr[plot_pe, :, :, colnames == "te"].flatten()
 
-f1 = plt.figure(constrained_layout=True, figsize=(textwidth, textwidth / 2))
-gs = f1.add_gridspec(2, 6)
+fig = plt.figure(constrained_layout=True)
+gs = fig.add_gridspec(2, 6)
 
-# plot grids -------------------------------------------------------------------
-f1_ax1 = f1.add_subplot(gs[0, 0])
-print(p_e[(np.abs(p_e - 0)).argmin()])
-grid = dat[p_e == 0,
-           colnames == "st"].reshape(len(nrho), len(nphi))
-grid = np.flipud(grid.T)
-im = f1_ax1.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
-                   aspect="auto", interpolation="nearest", cmap=shifted_cmap,
-                   vmin=epmin, vmax=epmax)
-f1_ax1.set_ylabel("efficiency ($\\phi$)")
-f1_ax1.set_xlabel(" ", horizontalalignment="right")
-# f1_ax1.set_xscale('log')
-f1.text(x=.2, y=.52, s="link density ($\\rho$)", ha="center")
+# survival time
+fu0 = fig.add_subplot(gs[0, 0])
+fu1 = fig.add_subplot(gs[0, 1])
+fu2 = fig.add_subplot(gs[0, 2])
 
-f1_ax2 = f1.add_subplot(gs[0, 1], sharey=f1_ax1)
-print(p_e)
-print(np.searchsorted(p_e, 0.02, side="right"))
-grid = dat[p_e == p_e[np.searchsorted(p_e, 0.02, side="right")],
-           colnames == "st"].reshape(len(nrho), len(nphi))
-grid = np.flipud(grid.T)
-im = f1_ax2.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
-                   aspect="auto", interpolation="nearest", cmap=shifted_cmap,
-                   vmin=epmin, vmax=epmax)
-# f1_ax2.set_xscale('log')
+for pe, ax, lab in zip(plot_pe, [fu0, fu1, fu2], labels["st"]):
+    grid = np.flipud(darr[pe, :, :, np.where(colnames == "st")[0][0]].T)
+    im = ax.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
+                   vmin=c_st.min(), vmax=c_st.max())
+    # plot annotations
+    textstr = ' - '.join((lab, r'$p_e=%.5f$' % (npe[pe],)))
+    ax.text(.0, 1.05, textstr, transform=ax.transAxes, fontsize=12,
+            ha="left", va="top")
 
 
-f1_ax3 = f1.add_subplot(gs[0, 2], sharey=f1_ax1)
-grid = dat[p_e == p_e[np.searchsorted(p_e, 0.00, side="right")],
-           colnames == "te"].reshape(len(nrho), len(nphi))
-grid = np.flipud(grid.T)
-im = f1_ax3.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
-                   aspect="auto", interpolation="nearest", cmap=shifted_cmap,
-                   vmin=epmin, vmax=epmax)
-# f1_ax3.set_xscale('log')
-f1_ax3.set_ylabel("efficiency ($\\phi$)")
-f1.text(x=.52, y=.52, s="link density ($\\rho$)", ha="center")
+# energy
+fu3 = fig.add_subplot(gs[0, 3])
+fu4 = fig.add_subplot(gs[0, 4])
+fu5 = fig.add_subplot(gs[0, 5])
 
-f1_ax4 = f1.add_subplot(gs[0, 3], sharey=f1_ax1)
-grid = dat[p_e == p_e[np.searchsorted(p_e, 0.02)],
-           colnames == "te"].reshape(len(nrho), len(nphi))
-grid = np.flipud(grid.T)
-im = f1_ax4.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
-                   aspect="auto", interpolation="nearest", cmap=shifted_cmap,
-                   vmin=epmin, vmax=epmax)
-# f1_ax4.set_xscale('log')
-
-
-f1_ax5 = f1.add_subplot(gs[0, 4], sharey=f1_ax1)
-grid = dat[p_e == p_e[np.searchsorted(p_e, 0.00275)],
-           colnames == "tediff"].reshape(len(nrho), len(nphi))
-grid = np.flipud(grid.T)
-im = f1_ax5.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
-                   aspect="auto", interpolation="nearest", cmap=shifted_cmap,
-                   vmin=epmin, vmax=epmax)
-f1_ax5.set_ylabel("efficiency ($\\phi$)")
-# f1_ax5.set_xscale('log')
-
-f1.text(x=.85, y=.52, s="link density ($\\rho$)", ha="center")
-# f1_ax5.text(x = max(nrho)*.7, y = max(nphi)*.92,
-#             s = str(np.round(np.log10(i),1)),
-#             fontsize = 8)
-
-f1_ax6 = f1.add_subplot(gs[0, 5], sharey=f1_ax1)
-grid = dat[p_e == p_e[np.searchsorted(p_e, 0.02)],
-           colnames == "tediff"].reshape(len(nrho), len(nphi))
-grid = np.flipud(grid.T)
-im = f1_ax6.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
-                   aspect="auto", interpolation="nearest", cmap=shifted_cmap,
-                   vmin=epmin, vmax=epmax)
-# f1_ax6.set_xscale('log')
-
-# f1_ax6.text(x = max(nrho)*.7, y = max(nphi)*.92,
-#             s = str(np.round(np.log10(i),1)),
-#             fontsize = 8)
-
-# plot colorbar ----------------------------------------------------------------
-# fig.subplots_adjust(right=0.75)
-# cbar_ax_ep = fig.add_axes([0.8, 0.2, 0.05, .6])
-# fig.colorbar(im, cax = cbar_ax_ep)
-
-
-# plot st and te over p_e ------------------------------------------------------
-f1_ax7 = f1.add_subplot(gs[1, 0:2])
-f1_ax7.plot(npe, out_s, label="survival")
-f1_ax7.fill_between(npe, [x[0] for x in out_s_conf], [x[1] for x in out_s_conf],
-                    alpha=.5)
-f1_ax7.set_xlabel("$p_e$")
-f1_ax7.set_xscale('log')
-
-# f1_ax7.set_ylim(np.min(out_s)*0.9, np.max(out_s)*1.1)
-# f1.text(x = .48, y = 0.01, s= "exploration probability ($p_e$)", ha = "center")
-# f1_ax7.set_ylabel("mean survival time")
-f1_ax7.legend(frameon=False)
-
-f1_ax8 = f1.add_subplot(gs[1, 2:4])
-f1_ax8.plot(npe, out_e, label="energy")
-f1_ax8.fill_between(npe, [x[0] for x in out_e_conf], [x[1] for x in out_e_conf],
-                    alpha=.5)
-f1_ax8.set_xlabel("$p_e$")
-f1_ax8.set_xscale('log')
-
-# f1_ax8.set_ylabel("mean energy production  ")
-f1_ax8.legend(frameon=False)
-
-f1_ax9 = f1.add_subplot(gs[1, 4:6])
-f1_ax9.plot(npe, magn_badarea, label="magnitude of redarea")
-f1_ax9.fill_between(npe,
-                    [x[0] for x in out_ed_conf],
-                    [x[1] for x in out_ed_conf],
-                    alpha=.5)
-f1_ax9.set_xlabel("$p_e$")
-f1_ax9.set_xscale('log')
-f1_ax9.legend(frameon=False)
-
-# remove ticklabels from y axis in gridplots
-plt.setp(f1_ax2.get_yticklabels(), visible=False)
-plt.setp(f1_ax4.get_yticklabels(), visible=False)
-plt.setp(f1_ax6.get_yticklabels(), visible=False)
-# plt.yscale('log')
-# plt.xscale('log')
-plt.savefig("pub_figure4.pdf")
-plt.show()
+for pe, ax, lab in zip(plot_pe, [fu3, fu4, fu5], labels["te"]):
+    grid = np.flipud(darr[pe, :, :, np.where(colnames == "te")[0][0]].T)
+    im = ax.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
+                   vmin=c_te.min(), vmax=c_te.max())
+    # plot annotations
+    textstr = ' - '.join((lab, r'$p_e=%.5f$' % (npe[pe],)))
+    ax.text(.0, 1.05, textstr, transform=ax.transAxes, fontsize=12,
+            ha="left", va="top")
