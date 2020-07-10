@@ -24,8 +24,8 @@ data_orig = data
 # interpolate missing value ----------------------------------------------------
 
 ok = False
+cp = "te"  # check parameter
 while not ok:
-    cp = "te"  # check parameter
     r_nan = np.where(np.isnan(data[:, colnames == cp]))[0]
     r_large = np.where(data[:, colnames == cp] > 10e6)[0]
     print("Column:" + cp + "--- nan_rows:", r_nan, "large_rows:", r_large)
@@ -46,9 +46,16 @@ while not ok:
                 pr_u = int(input("Which value is too large? Maximum should be around 10e5. "
                                  "Enter row number: "))
 
-                print(d.loc[pr_u])
-                if bool(input("row ok? Press Enter if false, press any key to continue: ")):
-                    input_ok = True
+                try:
+                    print(d.loc[pr_u])
+                    if bool(input("row ok? Press Enter if false, press any key to continue: ")):
+                        input_ok = True
+                    else:
+                        input_ok = False
+                except:
+                    print("wrong")
+                    pass
+
 
             pars = set(["p_e", "rho", "phi"])
             correct = False
@@ -87,9 +94,14 @@ while not ok:
         data = data_changed  # store data when correct
     ok = bool(input("Enter 'True' if everything is ok. press enter if not ok"))
 
+r_nan = np.where(np.isnan(data[:, colnames == cp]))[0]
+r_large = np.where(data[:, colnames == cp] > 10e6)[0]
+print("Column:" + cp + "--- nan_rows:", r_nan, "large_rows:", r_large)
+
 n_changed = np.sum(data-data_orig != 0)
 print(n_changed, "entries were changed.")
 
-np.savetxt("./output_corrected.txt", data, header=colnames, delimiter=",", newline="\n")
+np.savetxt("./output_corrected.txt", data, header="p_e, rho, phi, te, st",
+           delimiter=",", newline="\n")
 
 print("saved in output_corrected.txt")
