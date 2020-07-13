@@ -22,13 +22,14 @@ sys.path.append('../../scripts/helpers/')
 from shifted_cmap import shiftedColorMap
 
 # data input and processing for upper subplots ---------------------------------
+print("hello")
 
 data = np.loadtxt("output.txt",
                   delimiter=",", skiprows=1)
 colnames = np.array(["p_e", "rho", "phi", "te", "st"])
-
 # data = data[np.lexsort((data[:, 2], data[:, 1], data[:, 0]))]
 
+print("import complete")
 p_e = data[:, 0]
 rho = data[:, 1]
 phi = data[:, 2]

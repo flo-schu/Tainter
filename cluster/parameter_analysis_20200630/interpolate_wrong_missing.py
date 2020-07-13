@@ -15,7 +15,7 @@ import pandas as pd
 
 # data input and processing for upper subplots ---------------------------------
 print("Hello! Starting import...")
-data = np.loadtxt("output.txt", delimiter=",", skiprows=1)
+data = np.load("output.npy", allow_pickle=True)
 colnames = np.array(["p_e", "rho", "phi", "te", "st"])
 print("import complete")
 
@@ -101,7 +101,8 @@ print("Column:" + cp + "--- nan_rows:", r_nan, "large_rows:", r_large)
 n_changed = np.sum(data-data_orig != 0)
 print(n_changed, "entries were changed.")
 
-np.savetxt("./output_corrected.txt", data, header="p_e, rho, phi, te, st",
-           delimiter=",", newline="\n")
+np.save("output_interpol", data, allow_pickle=True)
+# np.savetxt("./output_corrected.txt", data, header="p_e, rho, phi, te, st",
+#            delimiter=",", newline="\n")
 
-print("saved in output_corrected.txt")
+print("saved in output_interpol.txt")
