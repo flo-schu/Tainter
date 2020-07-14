@@ -12,10 +12,19 @@
 
 import numpy as np
 import pandas as pd
+import pickle
 
 # data input and processing for upper subplots ---------------------------------
 print("Hello! Starting import...")
-data = np.load("output.pkl", allow_pickle=True)
+objects = []
+with (open("output.pkl", "rb")) as openfile:
+    while True:
+        try:
+            objects.append(pickle.load(openfile))
+        except EOFError:
+            break
+
+data = np.concatenate(objects)
 colnames = np.array(["p_e", "rho", "phi", "te", "st"])
 print("import complete")
 
@@ -105,4 +114,4 @@ np.save("output_interpol", data, allow_pickle=True)
 # np.savetxt("./output_corrected.txt", data, header="p_e, rho, phi, te, st",
 #            delimiter=",", newline="\n")
 
-print("saved in output_interpol.txt")
+print("saved in output_interpol.npy")

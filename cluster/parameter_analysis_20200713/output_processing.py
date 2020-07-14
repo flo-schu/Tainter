@@ -17,7 +17,7 @@ import pickle
 # in this script I use type hints to declare the type of my variables used
 # for type checking for better debugging and later code analysis.
 
-params_files = os.listdir("params/")
+params_files = os.listdir("../parameter_analysis_20200630/params/")
 output_files = os.listdir("output/")  # returns list of files
 
 par = sorted([int(re.findall('[0-9]+', i)[0]) for i in params_files])

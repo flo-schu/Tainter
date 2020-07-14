@@ -23,8 +23,8 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 # data input and processing for upper subplots ---------------------------------
 print("Hello! Starting import...")
-data = np.load("./cluster/parameter_analysis_20200630/output_interpol.npy", allow_pickle=True)
-# data = np.load("output_interpol.npy", allow_pickle=True)
+# data = np.load("./cluster/parameter_analysis_20200630/output_interpol.npy", allow_pickle=True)
+data = np.load("output_interpol.npy", allow_pickle=True)
 colnames = np.array(["p_e", "rho", "phi", "te", "st"])
 print("Import complete")
 
@@ -83,12 +83,10 @@ fu1 = fig.add_subplot(gs[0, 1])
 fu2 = fig.add_subplot(gs[0, 2])
 
 for pe, ax, lab in zip(plot_pe, [fu0, fu1, fu2], labels["st"]):
-    grid = np.flipud(darr[plot_pe[0], :, :, np.where(colnames == "st")[0][0]].T)
+    grid = np.flipud(darr[pe, :, :, np.where(colnames == "st")[0][0]].T)
     im = ax.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
                    vmin=c_st.min(), vmax=c_st.max())
-    grid = np.flipud(darr[plot_pe[0], :, :, np.where(colnames == "rho")[0][0]].T)
-    im = ax.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
-                   vmin=nrho.min(), vmax=nrho.max())
+
     if lab != "A1": ax.yaxis.set_ticklabels([])
     if lab == "A1": ax.set_ylabel("output elasticity ($\\phi$)")
     if lab == "A2": ax.text(x=.15, y=.94, s="link density ($\\rho$)", ha="center")
@@ -142,10 +140,12 @@ for pe, ax, lab in zip(plot_pe, [fu3, fu4, fu5], labels["te"]):
 fm1 = fig.add_subplot(gs[1, 0:3])
 fm1.cla()
 plot_phi = np.arange(len(nphi))
-pe_frame = npe < 0.003
+pe_frame = npe <= 0.02
 
-fm1.set_xlim(0, 0.0027)
+# fm1.set_xlim(0, 0.0027)
+fm1.set_xlim(9e-6, 0.02)
 fm1.set_ylim(0, 10100)
+fm1.set_xscale('log')
 fm1.set_ylabel("survival time")
 fm1.set_xlabel("exploration ($p_e$)")
 fm1.text(.0, 1.05, "A4", transform=fm1.transAxes, fontsize=12,
@@ -199,7 +199,7 @@ fm2.add_collection(line_segments)
 fm2cb = fig.colorbar(line_segments, cax=axins2, ticklocation="left")
 fm2cb.set_label('output elasticity ($\\phi$)')
 
-plt.savefig('pub_figure4_.pdf', dpi=200)
+plt.savefig('pub_figure4.pdf', dpi=200)
 
 # fl1 = fig.add_subplot(gs[2, 0:3])
 # fl1.cla()
