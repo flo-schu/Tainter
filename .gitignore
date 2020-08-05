@@ -14,3 +14,4 @@
 *.pickle
 /venv/
 /.idea/
+*.pkl

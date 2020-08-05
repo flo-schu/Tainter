@@ -135,7 +135,9 @@ print(st_e)
 textwidth = 12.12537
 plt.rcParams.update({'font.size': 14})
 
-cmap = cm.get_cmap("tab20", 20)
+cmap_a = cm.get_cmap("Blues", 4)
+cmap_b = cm.get_cmap("Oranges", 4)
+cmap_c = cm.get_cmap("Greys", 4)
 fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True,
                                     figsize=(textwidth, textwidth / 2))
 
@@ -143,35 +145,35 @@ cv = dict(p0=14, p1=0, p2=2)
 
 alpha_sim = .05
 # simulation
-ax1.plot(admin_b, color=cmap(cv["p0"] + 1), alpha=alpha_sim)
-ax1.plot(admin_i, color=cmap(cv["p1"] + 1), alpha=alpha_sim)
-ax1.plot(admin_e, color=cmap(cv["p2"] + 1), alpha=alpha_sim)
-ax1.yaxis.set_label_position("right")
+ax1.plot(admin_b, color=cmap_a(1), alpha=alpha_sim)
+ax1.plot(admin_i, color=cmap_a(2), alpha=alpha_sim)
+ax1.plot(admin_e, color=cmap_a(3), alpha=alpha_sim)
+# ax1.yaxis.set_label_position("right")
 ax1.set_ylabel("admin")
 
-ax2.plot(ecap_b, color=cmap(cv["p0"] + 1), alpha=alpha_sim)
-ax2.plot(ecap_i, color=cmap(cv["p1"] + 1), alpha=alpha_sim)
-ax2.plot(ecap_e, color=cmap(cv["p2"] + 1), alpha=alpha_sim)
-ax2.yaxis.set_label_position("right")
+ax2.plot(ecap_b, color=cmap_b(1), alpha=alpha_sim)
+ax2.plot(ecap_i, color=cmap_b(2), alpha=alpha_sim)
+ax2.plot(ecap_e, color=cmap_b(3), alpha=alpha_sim)
+# ax2.yaxis.set_label_position("right")
 ax2.set_ylabel("energy $cap^{-1}$")
 
 # density plots
-ax3.hist(st_b, bins=25, color=cmap(cv["p0"]), alpha=.5, label="$p_{e}$ = 0.0")
-ax3.hist(np.array(st_e), bins=25, color=cmap(cv["p2"]), alpha=.5, label="$p_{e}$ = 0.02")
-ax3.hist(st_i, bins=25, color=cmap(cv["p1"]), alpha=.5, label="$p_{e}$ = 0.00275")
+ax3.hist(st_b, bins=25, color=cmap_c(1), alpha=.5, label="$p_{e}$ = 0.0")
+ax3.hist(np.array(st_e), bins=25, color=cmap_c(2), alpha=.5, label="$p_{e}$ = 0.02")
+ax3.hist(st_i, bins=25, color=cmap_c(3), alpha=.5, label="$p_{e}$ = 0.00275")
 # ax3.set_ylim(0, 0.001)
 ax3.set_xlim(-250, 5250)
-ax3.yaxis.set_label_position("right")
+# ax3.yaxis.set_label_position("right")
 ax3.set_ylabel("collapse")
 
 # analytic
-ax1.plot(tb, np.array(xb) / N, "--", color=cmap(cv["p0"]))
-ax1.plot(ti, np.array(xi) / N, "--", color=cmap(cv["p1"]))
-ax1.plot(te, np.array(xe) / N, "--", color=cmap(cv["p2"]))
+ax1.plot(tb, np.array(xb) / N, "--", color=cmap_a(1))
+ax1.plot(ti, np.array(xi) / N, "--", color=cmap_a(2))
+ax1.plot(te, np.array(xe) / N, "--", color=cmap_a(3))
 
-ax2.plot(tb, f_e(np.array(xb), N, rho, phi), "--", color=cmap(cv["p0"]))
-ax2.plot(ti, f_e(np.array(xi), N, rho, phi), "--", color=cmap(cv["p1"]))
-ax2.plot(te, f_e(np.array(xe), N, rho, phi), "--", color=cmap(cv["p2"]))
+ax2.plot(tb, f_e(np.array(xb), N, rho, phi), "--", color=cmap_b(1))
+ax2.plot(ti, f_e(np.array(xi), N, rho, phi), "--", color=cmap_b(2))
+ax2.plot(te, f_e(np.array(xe), N, rho, phi), "--", color=cmap_b(3))
 
 fig.subplots_adjust(bottom=0.08, left=0.07, right=0.97, top=.95)
 

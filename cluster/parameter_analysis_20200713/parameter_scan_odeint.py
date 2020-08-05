@@ -61,28 +61,26 @@ def get_st(t, e):
 
 
 # Debugging: -------------------------------------------------------------------
-# t = np.linspace(0, 10000, 10001)
-# par = [0,0.002,1.333]
-# p_e, rho, phi = par[0], par[1], par[2]
-# result = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha),
-#                 full_output=False)
-# result[result > N] = N  # turn all x > N to N (fix numerical issue)
-# e = f_e(result[:, 0], N, rho, phi)
-# te = trapz(e, t)
-# st = get_st(t, e)
-# print("| pe, rho, phi:", par, "-- st:", st,
-#       "-- te:", np.round(te, 18), "-- min_e:", np.round(np.min(e), 2), flush=True)
-#
-#
-# import matplotlib.pyplot as plt
-# plt.cla()
-# plt.plot(t, result/N, label="a")
-# plt.plot(t, e, label="e")
-# plt.legend()
-# plt.xscale('log')
-# plt.show()
+import matplotlib.pyplot as plt
+t = np.linspace(0, 10000, 10001)
+par = [0.0027,0.002,1.333]
+p_e, rho, phi = par[0], par[1], par[2]
+result = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha))
+result[result > N] = N  # turn all x > N to N (fix numerical issue)
+e = f_e(result[:, 0], N, rho, phi)
+st = get_st(t, e)
+te = trapz(e[:st], t[:st])
 
-# input("stop.")
+print("| pe, rho, phi:", par, "-- st:", st, "-- te:", np.round(te, 18), "-- min_e:", np.round(np.min(e), 2), flush=True)
+
+plt.cla()
+plt.plot(t, result/N, label="a")
+plt.plot(t, e, label="e")
+plt.legend()
+plt.xscale('log')
+plt.show()
+
+input("stop.")
 # ------------------------------------------------------------------------------
 
 t = np.linspace(0, 10000, 10001)

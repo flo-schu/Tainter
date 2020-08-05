@@ -37,7 +37,6 @@ nphi = np.unique(phi)
 
 print(len(data), len(npe), len(nrho), len(nphi))
 
-
 # recycle pe=0 over all unique pe values and add column to the end of the array
 te_0 = np.tile(data[p_e == 0, colnames == "te"], len(npe))
 dat = np.column_stack((data, te_0))  # append a 1d array to a 2d array (via column)
@@ -57,10 +56,14 @@ colnames = colnames[colnames != "te0"]
 # access like:
 # a) darr[p_e][rho][phi][colnames]  entries in brackets are replaced by integers
 # b) darr[p_e, rho, phi, colnames]  to select all choose :
-darr = dat.reshape((len(npe),len(nrho),len(nphi),6))
+darr = dat.reshape((len(npe), len(nrho), len(nphi), 6))
 
 # lower subplots
+# filter darr
+lim_phi = 1.3
+nphi = nphi[nphi < lim_phi]
 
+darr = darr[:, :, range(len(nphi)), :]
 
 # PLOT #########################################################################
 
@@ -92,7 +95,7 @@ for pe, ax, lab in zip(plot_pe, [fu0, fu1, fu2], labels["st"]):
     contour_phi = np.flipud(darr[pe, :, :, np.where(colnames == "phi")[0][0]].T)
     contour_stlim = np.flipud(darr[pe, :, :, np.where(colnames == "st")[0][0]].T)
     im = ax.imshow(grid, extent=(min(nrho), max(nrho), min(nphi), max(nphi)),
-                   vmin=c_st.min(), vmax=c_st.max()-1)
+                   vmin=c_st.min(), vmax=c_st.max() - 1)
     ax.contour(contour_rho, contour_phi, contour_stlim,
                levels=np.array([9999]), linestyles="-", colors="black")
     if lab != "A1": ax.yaxis.set_ticklabels([])
@@ -100,9 +103,9 @@ for pe, ax, lab in zip(plot_pe, [fu0, fu1, fu2], labels["st"]):
     if lab == "A2": ax.text(x=.15, y=.94, s="link density ($\\rho$)", ha="center")
     if lab == "A3":
         axins = inset_axes(ax,
-                             width="6%",  # width = 50% of parent_bbox width
-                             height="40%",  # height : 5%
-                             loc='upper right')
+                           width="6%",  # width = 50% of parent_bbox width
+                           height="40%",  # height : 5%
+                           loc='upper right')
         fu3cb = fig.colorbar(im, cax=axins, ticklocation="left", extend="max")
         fu3cb.set_label('survival time')
 
@@ -135,14 +138,14 @@ for pe, ax, lab in zip(plot_pe, [fu3, fu4, fu5], labels["te"]):
     if lab == "B2": ax.text(x=.15, y=.94, s="link density ($\\rho$)", ha="center")
     if lab == "B3":
         axins = inset_axes(ax,
-                             width="6%",  # width = 50% of parent_bbox width
-                             height="40%",  # height : 5%
-                             loc='upper right')
+                           width="6%",  # width = 50% of parent_bbox width
+                           height="40%",  # height : 5%
+                           loc='upper right')
         fu3cb = fig.colorbar(im, cax=axins, ticklocation="left")
         fu3cb.set_label('output (E)', color='white')
         fu3cb.ax.yaxis.set_tick_params(color='white')
         fu3cb.outline.set_edgecolor('white')
-        plt.setp(plt.getp(fu3cb.ax.axes, 'yticklabels'), color='white')    # plot annotations
+        plt.setp(plt.getp(fu3cb.ax.axes, 'yticklabels'), color='white')  # plot annotations
 
     textstr = ' - '.join((lab, r'$p_e=%.5f$' % (npe[pe],)))
     ax.text(.0, 1.05, textstr, transform=ax.transAxes, fontsize=12,
@@ -151,14 +154,16 @@ for pe, ax, lab in zip(plot_pe, [fu3, fu4, fu5], labels["te"]):
 # exploration (lower left subplot)
 fm1 = fig.add_subplot(gs[1, 0:3])
 fm1.cla()
-plot_phi = np.arange(len(nphi))
+plot_phi = np.arange(len(nphi[nphi < lim_phi]))
 pe_frame = npe <= 0.02
 
 # fm1.set_xlim(0, 0.0027)
 fm1.set_xlim(9e-6, 0.02)
 fm1.set_ylim(0, 10100)
+fm1.set_yticks([0, 2000, 4000, 6000, 8000, 10000])
+fm1.set_yticklabels(['0', '2000', '4000', '6000', '8000', '$\\geq$ 10000'])
 fm1.set_xscale('log')
-fm1.set_ylabel("survival time")
+fm1.set_ylabel("median survival time (t)")
 fm1.set_xlabel("exploration ($p_e$)")
 fm1.text(.0, 1.05, "A4", transform=fm1.transAxes, fontsize=12,
          ha="left", va="top")
@@ -179,7 +184,6 @@ axins1 = inset_axes(fm1,
 fm1cb = fig.colorbar(line_segments, cax=axins1, ticklocation="left")
 fm1cb.set_label('output elasticity ($\\phi$)')
 
-
 # total energy over p_e
 fm2 = fig.add_subplot(gs[1, 3:6])
 fm2.cla()
@@ -188,7 +192,7 @@ pe_frame = npe < 0.2
 
 fm2.set_xlim(9e-6, 0.02)
 fm2.set_ylim(1e2, 2e5)
-fm2.set_ylabel("output (E)")
+fm2.set_ylabel("median output (E)")
 fm2.set_xlabel("exploration ($p_e$)")
 fm2.set_xscale('log')
 fm2.set_yscale('log')
@@ -211,7 +215,7 @@ fm2.add_collection(line_segments)
 fm2cb = fig.colorbar(line_segments, cax=axins2, ticklocation="left")
 fm2cb.set_label('output elasticity ($\\phi$)')
 
-plt.savefig('pub_figure4__.pdf', dpi=200)
+plt.savefig('pub_figure4_limit_phi.pdf', dpi=200)
 plt.show()
 # fl1 = fig.add_subplot(gs[2, 0:3])
 # fl1.cla()
