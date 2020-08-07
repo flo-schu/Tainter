@@ -20,6 +20,7 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from matplotlib.patches import ConnectionPatch
+from labellines import labelLines
 
 # data input and processing for upper subplots ---------------------------------
 print("Hello! Starting import...")
@@ -77,7 +78,11 @@ c_st = darr[plot_pe, :, :, colnames == "st"].flatten()
 cmap = cm.get_cmap('plasma')
 cmap.set_over("grey")
 
-fig = plt.figure(constrained_layout=False, figsize=(16, 8))
+textwidth = 12.12537
+fig = plt.figure(constrained_layout=False, figsize=(textwidth, textwidth / 2), frameon=True)
+plt.rcParams.update({'font.size': 14})
+
+# fig.set_tight_layout(tight=True)
 gs = fig.add_gridspec(2, 4)
 plt.draw()
 
@@ -86,8 +91,10 @@ fu0 = fig.add_subplot(gs[1, 0])
 fu1 = fig.add_subplot(gs[1, 1])
 fu2 = fig.add_subplot(gs[1, 2])
 fu3 = fig.add_subplot(gs[1, 3])
+fm1 = fig.add_subplot(gs[0, 0:4])
 
 for pe, ax, lab in zip(plot_pe, [fu0, fu1, fu2, fu3], labels["st"]):
+    ax.cla()
     grid = np.flipud(darr[pe, :, :, np.where(colnames == "st")[0][0]].T)
     contour_rho = np.flipud(darr[pe, :, :, np.where(colnames == "rho")[0][0]].T)
     contour_phi = np.flipud(darr[pe, :, :, np.where(colnames == "phi")[0][0]].T)
@@ -98,11 +105,11 @@ for pe, ax, lab in zip(plot_pe, [fu0, fu1, fu2, fu3], labels["st"]):
                levels=np.array([9999]), linestyles="-", colors="black")
     if lab != "$B_1$": ax.yaxis.set_ticklabels([])
     if lab == "$B_1$": ax.set_ylabel("output elasticity ($\\phi$)")
-    if lab == "$B_2$": ax.text(x=.325, y=.95, s="link density ($\\rho$)", ha="center")
+    if lab == "$B_2$": ax.text(x=.325, y=.94, s="link density ($\\rho$)", ha="center")
     if lab == "$B_4$":
         axins = inset_axes(ax,
-                           width="6%",  # width = 50% of parent_bbox width
-                           height="40%",  # height : 5%
+                           width="8%",  # width = 50% of parent_bbox width
+                           height="60%",  # height : 5%
                            loc='lower right')
         fu3cb = fig.colorbar(im, cax=axins, ticklocation="left", extend="max")
         fu3cb.set_label('survival time')
@@ -117,57 +124,53 @@ for pe, ax, lab in zip(plot_pe, [fu0, fu1, fu2, fu3], labels["st"]):
             ha="left", va="top")
 
 # exploration (lower left subplot)
-fm1 = fig.add_subplot(gs[0, 0:4])
 fm1.cla()
 
 fm1.set_xlim(9e-6, 0.003)
 fm1.set_ylim(0, 10500)
 fm1.set_yticks([0, 2000, 4000, 6000, 8000, 10000])
-fm1.set_yticklabels(['0', '2000', '4000', '6000', '8000', '$\\geq$ 10000'])
+fm1.set_yticklabels(['0', '2000', '4000', '6000', '8000', '$\\geq 10000$'])
 fm1.set_xscale('log')
+fm1.set_xticks([1e-5, 1e-4, 1e-3, 2.5e-3])
+fm1.set_xticklabels(["$10^{-5}$", "$10^{-4}$", "$10^{-3}$", "${}^1{/}_N$"])
 fm1.set_ylabel("median survival time (t)")
 fm1.set_xlabel("exploration ($p_e$)")
 fm1.text(.0075, .94, "A", transform=fm1.transAxes, fontsize=14,
          ha="left", va="top")
-# fm1.axvline(x=0, ymin=0, ymax=1, color="grey", linestyle="--")
+fm1.axvline(x=2.5e-3, ymin=0, ymax=1, color="grey", linestyle="--")
 # fm1.axvline(x=1e-4, ymin=0, ymax=1, color="grey", linestyle="--")
 # fm1.axvline(x=5e-4, ymin=0, ymax=1, color="grey", linestyle="--")
 # fm1.axvline(x=3e-3, ymin=0, ymax=1, color="grey", linestyle="--")
 
 # pe and phi arrays are the same for any rho value. Hence any can be chosen in
-# this case [0]
-contour_pe = darr[:, 0, :, np.where(colnames == "p_e")[0][0]]
-contour_phi = darr[:, 0, :, np.where(colnames == "phi")[0][0]]
-# median is computed for st along the rho axis
-contour_st = np.median(darr[:, :, :, np.where(colnames == "st")[0][0]], axis=1)
+darr_median = np.median(darr, axis=1)
 
-levels = [1, 1.05, 1.075, 1.1, 1.15, 1.18, 1.19, 1.195, 1.2, 1.25]
+levels = nphi.searchsorted([1, 1.05, 1.075, 1.1, 1.15, 1.18, 1.19, 1.195, 1.2])
+for lvl in levels:
+    lbl = "$\\phi = " + str(np.round(nphi[lvl], 2)) + "$"
+    if nphi[lvl] > 1.2:
+        lbl = "$\\phi \\geq " + str(np.round(nphi[lvl], 2)) + "$"
+    fm1.plot(darr_median[:, lvl, 0], darr_median[:, lvl, 4], color="black", linewidth=.75,
+             label=lbl)
 
-CS = fm1.contour(contour_pe, contour_st, contour_phi, levels=levels, linestyles="-", colors="black")
-# manual_locations = np.asarray(plt.ginput(len(levels), timeout=-1))
-manual_locations = np.array([
-    [1.37200179e-05, 4.12500000e+02],
-    [3.00000000e-05, 1.38750000e+03],
-    [6.17240961e-05, 3.00000000e+03],
-    [1.30473382e-04, 3.80000000e+03],
-    [1.70591944e-04, 5.40000000e+03],
-    [2.35691822e-04, 6.63750000e+03],
-    [2.82939199e-04, 7.61250000e+03],
-    [3.21089992e-04, 8.55000000e+03],
-    [3.47707952e-04, 9.67500000e+03],
-    [4.19370434e-04, 1.00875000e+04]
-])
-fm1.clabel(CS, inline=1, fontsize=10, manual=manual_locations)
+# x_locations = np.asarray(plt.ginput(len(levels), timeout=-1))[:,0]
+x_locations = np.array([1.517e-05, 2.474e-05, 5.069e-05, 8.418e-05, 1.611e-04,
+                        2.278e-04, 2.760e-04, 3.5e-04, 4.1e-04])
+labelLines(fm1.get_lines(), xvals=x_locations, zorder=2.5, fontsize=10,
+           bbox={'pad': .5, 'color': 'white'})
+
 
 # connections
 pe_ax = [0, 0.415, 0.694, 1]
 for pe, ax in zip(pe_ax, [fu0, fu1, fu2, fu3]):
     for side in [0, 1]:
         cp = ConnectionPatch((pe, 0), (side, 1), "axes fraction", "axes fraction", axesA=fm1, axesB=ax, color="grey",
-                             linestyle="--")
+                             linestyle="--", alpha=.5)
         fm1.add_artist(cp)
 
-plt.savefig('pub_figure4_contour_v2.pdf', dpi=200)
+plt.subplots_adjust(0.12, 0.09, 0.98, 0.98, 0.13, 0.31)
+plt.show()
+# plt.savefig('pub_figure4_contour_v2.pdf')
 # fl1 = fig.add_subplot(gs[2, 0:3])
 # fl1.cla()
 # pe_frame = npe < 0.0026
