@@ -127,7 +127,7 @@ for pe, ax, lab in zip(plot_pe, [fu0, fu1, fu2, fu3], labels["st"]):
 fm1.cla()
 
 fm1.set_xlim(9e-6, 0.003)
-fm1.set_ylim(0, 10500)
+fm1.set_ylim(0, 10000)
 fm1.set_yticks([0, 2000, 4000, 6000, 8000, 10000])
 fm1.set_yticklabels(['0', '2000', '4000', '6000', '8000', '$\\geq 10000$'])
 fm1.set_xscale('log')
@@ -145,20 +145,19 @@ fm1.axvline(x=2.5e-3, ymin=0, ymax=1, color="grey", linestyle="--")
 # pe and phi arrays are the same for any rho value. Hence any can be chosen in
 darr_median = np.median(darr, axis=1)
 
-levels = nphi.searchsorted([1, 1.05, 1.075, 1.1, 1.15, 1.18, 1.19, 1.195, 1.2])
+levels = nphi.searchsorted([1, 1.05, 1.07, 1.1, 1.15, 1.18, 1.19, 1.195])
 for lvl in levels:
     lbl = "$\\phi = " + str(np.round(nphi[lvl], 2)) + "$"
-    if nphi[lvl] > 1.2:
-        lbl = "$\\phi \\geq " + str(np.round(nphi[lvl], 2)) + "$"
-    fm1.plot(darr_median[:, lvl, 0], darr_median[:, lvl, 4], color="black", linewidth=.75,
-             label=lbl)
+    st = darr_median[:, lvl, 4]
+    st = np.where(st >= 10000, 1e100, st)
+    pe = darr_median[:, lvl, 0]
+    fm1.plot(pe, st, color="black", linewidth=.75, label=lbl)
 
 # x_locations = np.asarray(plt.ginput(len(levels), timeout=-1))[:,0]
 x_locations = np.array([1.517e-05, 2.474e-05, 5.069e-05, 8.418e-05, 1.611e-04,
-                        2.278e-04, 2.760e-04, 3.5e-04, 4.1e-04])
+                        2.278e-04, 2.760e-04, 3.5e-04])
 labelLines(fm1.get_lines(), xvals=x_locations, zorder=2.5, fontsize=10,
            bbox={'pad': .5, 'color': 'white'})
-
 
 # connections
 pe_ax = [0, 0.415, 0.694, 1]
@@ -169,8 +168,9 @@ for pe, ax in zip(pe_ax, [fu0, fu1, fu2, fu3]):
         fm1.add_artist(cp)
 
 plt.subplots_adjust(0.12, 0.09, 0.98, 0.98, 0.13, 0.31)
+plt.savefig('pub_figure4.pdf')
+plt.savefig('pub_figure4.png', dpi=1200)
 plt.show()
-# plt.savefig('pub_figure4_contour_v2.pdf')
 # fl1 = fig.add_subplot(gs[2, 0:3])
 # fl1.cla()
 # pe_frame = npe < 0.0026
