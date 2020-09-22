@@ -11,7 +11,7 @@ import numpy as np
 folder = "20191121_1734"
 
 # path = "./results/model/"
-path = "../../results/model/"
+path = "./results/model/"
 data_expl = pd.read_csv(path + folder + "/t5_explore.csv")
 data_base = pd.read_csv(path + folder + "/t5_base.csv")
 data_inte = pd.read_csv(path + folder + "/t5_intermediate.csv")
@@ -65,6 +65,6 @@ ax1.annotate("$p_{e}$ = 0", xy=(0.995, 0.88), xycoords="axes fraction",horizonta
 ax3.annotate("$p_{e}$ = 0.00275", xy=(0.995, 0.88), xycoords="axes fraction",horizontalalignment="right")
 ax5.annotate("$p_{e}$ = 0.02", xy=(0.995, 0.88), xycoords="axes fraction",horizontalalignment="right")
 # fig.tight_layout()
-fig.savefig("../../results/model/" + folder + "/pub_figure2.pdf")
-fig.savefig("../../results/model/" + folder + "/pub_figure2.png", dpi=1200)
+fig.savefig("./results/model/" + folder + "/pub_figure2.pdf")
+fig.savefig("./results/model/" + folder + "/pub_figure2.png", dpi=300)
 plt.show()

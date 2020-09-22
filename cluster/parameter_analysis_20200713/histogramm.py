@@ -21,8 +21,8 @@ import seaborn as sns
 
 # data input and processing for upper subplots ---------------------------------
 print("Hello! Starting import...")
-data = np.load("./cluster/parameter_analysis_20200630/output_interpol.npy", allow_pickle=True)
-# data = np.load("output_interpol.npy", allow_pickle=True)
+# data = np.load("./cluster/parameter_analysis_20200630/output_interpol.npy", allow_pickle=True)
+data = np.load("output_interpol.npy", allow_pickle=True)
 colnames = np.array(["p_e", "rho", "phi", "te", "st"])
 print("Import complete")
 

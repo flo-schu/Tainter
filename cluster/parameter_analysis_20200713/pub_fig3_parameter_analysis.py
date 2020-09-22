@@ -23,8 +23,8 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 # data input and processing for upper subplots ---------------------------------
 print("Hello! Starting import...")
-# data = np.load("./cluster/parameter_analysis_20200713/output_interpol.npy", allow_pickle=True)
-data = np.load("output_interpol.npy", allow_pickle=True)
+data = np.load("./cluster/parameter_analysis_20200713/output_interpol.npy", allow_pickle=True)
+# data = np.load("output_interpol.npy", allow_pickle=True)
 colnames = np.array(["p_e", "rho", "phi", "te", "st"])
 print("Import complete")
 
@@ -211,7 +211,7 @@ fm2.add_collection(line_segments)
 fm2cb = fig.colorbar(line_segments, cax=axins2, ticklocation="left")
 fm2cb.set_label('output elasticity ($\\phi$)')
 
-plt.savefig('pub_figure4__.pdf', dpi=200)
+plt.savefig('./cluster/parameter_analysis_20200713/pub_figure4__.pdf', dpi=150)
 plt.show()
 # fl1 = fig.add_subplot(gs[2, 0:3])
 # fl1.cla()

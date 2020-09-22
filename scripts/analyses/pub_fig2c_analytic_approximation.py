@@ -48,13 +48,14 @@ phi = 1.05  # efficiency of coordinated Workers
 beta = 15  # scale parameter of beta distribution
 alpha = 1  # location parameter of beta distribution
 
+base_folder = "./results/model/"
 folder = "20191121_1732"
 sim_admin = ['base_admin.npy', 'inter_admin.npy', 'expl_admin.npy']
 sim_encap = ['base_ecap.npy', 'inter_ecap.npy', 'expl_ecap.npy']
-labels = ["$p_{e}$ = 0.0", "$p_{e}$ = 0.00275", "$p_{e}$ = 0.2"]
 lines = ["dashed", "dotted", "dashdot"]
 colors = [1, 2, 3]
-pe_plot = [0, 0.00275, 0.02]
+pe_plot = [0, 0.002, 0.02]
+labels = ["$p_{e}$ = " + str(i) for i in pe_plot]
 t = np.linspace(0, 5000, 5001)
 
 # plot params
@@ -102,7 +103,7 @@ ax1.set_position(bbox)
 
 # ax1:
 for sa, c in zip(sim_admin, colors):
-    sim_a = np.load("../../results/model/" + folder + "/" + sa)
+    sim_a = np.load(base_folder + folder + "/" + sa)
     ax1.plot(sim_a, color=cmap_a(c), alpha=alpha_sim)
 
 for c, lab, line, pe_it in zip(colors, labels, lines, pe_plot):
@@ -112,7 +113,7 @@ for c, lab, line, pe_it in zip(colors, labels, lines, pe_plot):
 
 # ax2:
 for se, c in zip(sim_encap, colors):
-    sim_e = np.load("../../results/model/" + folder + "/" + se)
+    sim_e = np.load(base_folder + folder + "/" + se)
     # print(sim_e[:,20])
     ax2.plot(sim_e, color=cmap_b(c), alpha=alpha_sim)
 
@@ -124,7 +125,7 @@ for c, lab, line, pe_it in zip(colors, labels, lines, pe_plot):
 
 # ax3:
 for se, c, lab in zip(sim_encap.__reversed__(), colors.__reversed__(), labels.__reversed__()):
-    sim_e = np.load("../../results/model/" + folder + "/" + se)
+    sim_e = np.load(base_folder + folder + "/" + se)
     st_sim = np.zeros(100)
     # count timepoints where energy was produced for each of the 100 model runs
     for i in np.arange(100):
@@ -136,6 +137,6 @@ ax2.legend(loc="center", bbox_to_anchor=(.5, .75), ncol=3, frameon=False)
 handles, labels = ax3.get_legend_handles_labels()
 ax3.legend(handles[::-1], labels[::-1], loc="center", bbox_to_anchor=(.5, .75), ncol=3, frameon=False)
 
-plt.savefig("../../results/model/" + folder + "/pub_figure3.pdf")
-plt.savefig("../../results/model/" + folder + "/pub_figure3.png", dpi=600)
+plt.savefig(base_folder + folder + "/pub_figure3.pdf")
+plt.savefig(base_folder + folder + "/pub_figure3.png", dpi=300)
 plt.show()

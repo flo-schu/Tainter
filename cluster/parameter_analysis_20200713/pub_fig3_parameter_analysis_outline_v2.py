@@ -24,8 +24,8 @@ from labellines import labelLines
 
 # data input and processing for upper subplots ---------------------------------
 print("Hello! Starting import...")
-# data = np.load("./cluster/parameter_analysis_20200713/output_interpol.npy", allow_pickle=True)
-data = np.load("output_interpol.npy", allow_pickle=True)
+data = np.load("./cluster/parameter_analysis_20200713/output_interpol.npy", allow_pickle=True)
+# data = np.load("output_interpol.npy", allow_pickle=True)
 colnames = np.array(["p_e", "rho", "phi", "te", "st"])
 print("Import complete")
 
@@ -168,8 +168,8 @@ for pe, ax in zip(pe_ax, [fu0, fu1, fu2, fu3]):
         fm1.add_artist(cp)
 
 plt.subplots_adjust(0.12, 0.09, 0.98, 0.98, 0.13, 0.31)
-plt.savefig('pub_figure4.pdf')
-plt.savefig('pub_figure4.png', dpi=1200)
+plt.savefig('./cluster/parameter_analysis_20200713/pub_figure4.pdf')
+plt.savefig('./cluster/parameter_analysis_20200713/pub_figure4.png', dpi=300)
 plt.show()
 # fl1 = fig.add_subplot(gs[2, 0:3])
 # fl1.cla()
