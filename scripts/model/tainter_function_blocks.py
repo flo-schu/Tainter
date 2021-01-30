@@ -1,29 +1,21 @@
-#seed = 1
 import random
 from scipy.stats import norm
-#random.seed(seed)  # normal python seed
-
 import numpy as np
-#random.seed(seed)  # numpy seed
-
 import matplotlib.pyplot as plt
 import os
 import importlib.util
-
-#os.chdir(os.getcwd()+'\\Tainter\\Models\\tf5')
-#import networkx from tf5 source
-spec = importlib.util.spec_from_file_location("networkx", "../../packages/networkx/__init__.py")
-nx = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(nx)
-
-
-#import networkx as nx
 import pandas as pd
 from scipy.stats import entropy
 import pickle as pickle
 import tkinter as tk
 from tkinter import filedialog
 from collections import Counter
+
+# import networkx package from tf5 source
+spec = importlib.util.spec_from_file_location("networkx", "../../packages/networkx/__init__.py")
+nx = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(nx)
+# import networkx as nx
 
 def init_history(A, L, Lc, E_cap, a, A_exp, L_exp, Lc_exp):
     """initialize dictionary which records the history of the network"""
@@ -397,10 +389,7 @@ def sample_network():
     Lc = set()
     G = nx.watts_strogatz_graph(n=100,k=5,p=0.05)
     L, Lc = refresh_network(A,L,Lc,G)
-    #print("A:",len(A),"L:", len(L),"Lc:", len(Lc), "sum:", sum([len(A),len(L),len(Lc)]))
     return G, A, L, Lc, N
-
-#G, A, L, Lc, N = sample_network()
 
 def exploration(G, A, L, Lc, N, exploration ):
     """
@@ -414,19 +403,12 @@ def exploration(G, A, L, Lc, N, exploration ):
             if i in A:
                 A.remove(i)
                 L.add(i)
-                #Aold.append(i)
-                #Lnew.append(i)
             elif i in Lc:
                 Lc.remove(i)
                 A.add(i)
-                #Lcold.append(i)
-                #Anew.append(i)
             elif i in L:
                 L.remove(i)
                 A.add(i)
-                #Lold.append(i)
-                #Anew.append(i)
-            #print("A: ",len(A),"L: ", len(L),"Lc: ", len(Lc))
 
     L, Lc = refresh_network(A, L, Lc, G)
 
@@ -546,11 +528,3 @@ def history_finish(history_record, run, shortnames = True):
     if shortnames == False:
         pass
     return history_record
-
-
-
-def testglob():
-    global test1, test2
-    test1 +20
-    test2 = test2*10
-    print(test1, test2)
