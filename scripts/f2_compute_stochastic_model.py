@@ -7,12 +7,11 @@ import time as time
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import model.tainter_function_blocks as tblocks
-import model.tainter_plots as t_plot
+import model.methods as tm
 import numpy as np
 import pandas as pd
 from matplotlib import cm
-from model.tainter_function_5_0 import tf5 as tainter
+from model.main import tainter
 from helpers.manage import icreate_folder_date
 
 # model parameters
@@ -36,7 +35,7 @@ history, t, args, fct, merun, wb, G = tainter(
     layout = "fixed",
     first_admin = "highest degree" ,
     choice = "topcoordinated",
-    exploration = 0.05,
+    exploration = 0.0,
     a = 1.0 ,
     stress = ["off"] ,
     shock = ["on","beta",[1,15]],
@@ -52,7 +51,7 @@ history, t, args, fct, merun, wb, G = tainter(
 history_b = history.copy()
 history = {key: value[0:plot_time] for key, value in history_b.items()}
 
-data = tblocks.disentangle_admins(history, N)
+data = tm.disentangle_admins(history, N)
 
 pd.DataFrame(data).to_csv(os.path.join(path, "data.csv"))
 with open(os.path.join(path, "parameters.txt"), "w") as f:

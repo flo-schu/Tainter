@@ -137,6 +137,6 @@ ax2.legend(loc="center", bbox_to_anchor=(.5, .75), ncol=3, frameon=False)
 handles, labels = ax3.get_legend_handles_labels()
 ax3.legend(handles[::-1], labels[::-1], loc="center", bbox_to_anchor=(.5, .75), ncol=3, frameon=False)
 
-plt.savefig(base_folder + folder + "/pub_figure3.pdf")
-plt.savefig(base_folder + folder + "/pub_figure3.png", dpi=300)
+# plt.savefig(base_folder + folder + "/pub_figure3.pdf")
+plt.savefig("../plots/pub_figure3.png", dpi=300)
 plt.show()

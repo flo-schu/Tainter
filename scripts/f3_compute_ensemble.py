@@ -1,7 +1,7 @@
 import os
 import pandas as pd
-import model.tainter_function_blocks as tblocks
-from model.tainter_function_5_0 import tf5 as tainter_explore
+import model.methods as tm
+from model.main import tainter
 from helpers.manage import icreate_folder_date
 
 N = 400
@@ -18,7 +18,7 @@ for i in range(iterations):
     # loop through exploration settings
     for s in range(len(scenarios)):
         expl = scenarios[s][0]
-        history, t, args, fct, merun, wb, G = tainter_explore(
+        history, t, args, fct, merun, wb, G = tainter(
             network = "erdos" , 
             N = N,
             k = 0,
@@ -42,7 +42,7 @@ for i in range(iterations):
         history_b = history.copy()
         history = {key: value[0:plot_time] for key, value in history_b.items()}
 
-        data = tblocks.disentangle_admins(history, N)
+        data = tm.disentangle_admins(history, N)
 
         runmode = scenarios[s][1]
 

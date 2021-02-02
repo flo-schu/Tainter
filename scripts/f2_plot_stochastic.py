@@ -6,9 +6,9 @@ from matplotlib import cm, patches
 
 # choose which runs to plot ----------------------------------------------------
 # directories where simulation results are stored which are to be compared
-a = "20210202_2227"
-b = "20210202_2229"
-c = "20210202_2236"
+a = "20210203_0007"
+b = "20210203_0006"
+c = "20210203_0005"
 
 path = "../data/model/"
 data_a = pd.read_csv(os.path.join(path, a, "data.csv"))
