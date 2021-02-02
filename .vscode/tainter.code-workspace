@@ -6,7 +6,7 @@
 	],
 	"settings": {
 		"python.autoComplete.extraPaths": [
-		"./scripts/"
+		"./scripts"
 		]
 	}
 }

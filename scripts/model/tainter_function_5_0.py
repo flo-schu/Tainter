@@ -2,7 +2,7 @@
 import inspect
 import numbers as numbers
 
-import tainter_function_blocks as tainter
+import model.tainter_function_blocks as tainter
 
 def tf5(  network = "watts" ,
           N = 100,
