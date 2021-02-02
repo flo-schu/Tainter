@@ -11,6 +11,15 @@ New studies in archaeology. Cambridge: CambridgeUniversity Press
 The model is an agent-based network model written in Python. The main files
 are included under scripts/model.
 
+## Analyses
+
+Several analyses can be performed with the model code.
+
++ stochastic simulations of the network with various paramter settings.
+    For details on parameters see the inline documentation in model/main.py
+
++ analytic calculations with equations derived in publication
+
 ## Instructions
 
 to execute the model code, navigate (cd) into scripts directory. From here all
@@ -25,12 +34,3 @@ The corresponding directories will appear under /data/YYYYMMDD_HHMM.
 Where the time corresponds to the current system time.
 These names need to be inserted into __stochastic_plot.py__. As a help,
 three example runs have been already included in a data directory.
-
-## Analyses
-
-Several analyses can be performed with the model code.
-
-+ stochastic simulations of the network with various paramter settings.
-    For details on parameters see the inline documentation in model/main.py
-
-+ analytic calculations with equations derived in publication
