@@ -16,15 +16,15 @@ are included under scripts/model.
 to execute the model code, navigate (cd) into scripts directory. From here all
 scripts in the main directory can be executed.
 
-Prefixes correspond to figures displayed in the publication
-
 The files __macroscopic_approximation.py__ and __stochastic_model.py__ are
 very basic scripts which execute the main modules of the code.
 
-data for f4 was generated on a high perfomance cluster. The necessary files for
-this computation are found under scripts/cluster. These files need to be slightly
-adapted to suit file structure. Simulations can be carried out on a normal
-computer if the resolution of parameters is reduced.
+In order to modify the output plot of __stochastic_plot.py__,
+__stochastic_model.py__ needs to be executed with desired paramter settings.
+The corresponding directories will appear under /data/YYYYMMDD_HHMM.
+Where the time corresponds to the current system time.
+These names need to be inserted into __stochastic_plot.py__. As a help,
+three example runs have been already included in a data directory.
 
 ## Analyses
 
@@ -34,5 +34,3 @@ Several analyses can be performed with the model code.
     For details on parameters see the inline documentation in model/main.py
 
 + analytic calculations with equations derived in publication
-
-+ several plots to illustrate the results in publication

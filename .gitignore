@@ -10,11 +10,9 @@ __pycache__
 *.aux
 *.npy
 *.png
-*.csv
 *.txt
 *.pickle
 /venv/
-/data/
 /plots/
 *.pkl
 *.pyc
