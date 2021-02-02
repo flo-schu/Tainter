@@ -107,47 +107,32 @@ def tf5(  network = "watts" ,
     # Initialize function
     A, L, Lc, positions, E_cap, tmax, ainit, A_exp, L_exp, Lc_exp, Admin = tainter.init(N, stress, a, eff, tmax)
     G = tainter.construct_network(network, N, k, p)
-    # C = tainter.complexity(G, N)
-    # crosslinks = tainter.crosslinks(G,A,L,Lc)
-    #C = 0
-    #crosslinks = 0
     history = tainter.init_history(A, L, Lc, E_cap, a, A_exp, L_exp, Lc_exp)
 
-    # Start Loop
     for t in range(tmax):
-        # Changing jobs. For me it makes sense to do this before I calculate Ecap
         A_2 = A.copy()
         L_2 = L.copy()
         Lc_2 = Lc.copy()
 
         A, L, Lc = tainter.exploration(G, A, L, Lc, N, exploration )
         A_exp, L_exp, Lc_exp = tainter.node_origin(A,L,Lc,A_2,L_2,Lc_2)
-        # print("output: Admin share: ",len(A)/N)
+
         # Environmental Stress or Shocks
         a, bumm =tainter.access(a,ainit, stress, shock)
-        # print("output access: ",a, bumm)
+
         # Calculate the Energy per Capita
         E_cap = tainter.energy_out_capita(a-bumm, L, Lc, eff, N)
-        #print(t, "before: ",E_cap, len(A))
-        # print("output E_cap: ",E_cap)
+
         # If E_cap below a threshold -> Admin selection mechanism
         if E_cap < threshold:
-            #if len(A) == N: break
+
             Admin = tainter.select_Admin(G, A, L, Lc, first_admin, choice)
-            # print("output select_Admin: ", Admin)
+
             # if no Admin is selected, there is no need to update the network
             if Admin != None:
                 L, Lc, A = tainter.update_network(A, L, Lc, Admin, G)
-                # print("output update_network: ",L,Lc,A)
 
         E_cap = tainter.energy_out_capita(a-bumm, L, Lc, eff, N)
-        #print(t, "after: ", E_cap, len(A))
-        # G, L, Lc, A = tainter.popdev(L, Lc, A, G, N, k, popmode, linkmode, death)
-        # energy_out_capita(a = a, L = L, Lc = Lc, eff = eff, N = N)
-        # crosslinks = 0
-        # crosslinks = tainter.crosslinks(G, A, L, Lc)
-        # C = 0
-        # C = tainter.complexity(G, N)
 
         if print_every != None:
             tainter.print_graph(print_every, t, A, Lc, L, G, positions, N)
@@ -165,10 +150,5 @@ def tf5(  network = "watts" ,
             merun = tainter.maximum_energy(history,mepercent)
             wb = tainter.wellbeing(history,threshold)
             tot_energy = tainter.total_energy(history)
-
-
-
-
-
 
     return history, t, args, fct, tot_energy, wb, G
