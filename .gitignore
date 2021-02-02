@@ -1,7 +1,7 @@
 
 *.thm
 *.synctex.gz
-*__pycache__*
+__pycache__
 *.out
 *.log
 *.fls
@@ -15,3 +15,4 @@
 /venv/
 /.idea/
 *.pkl
+*.pyc

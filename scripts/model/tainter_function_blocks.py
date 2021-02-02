@@ -12,7 +12,7 @@ import pandas as pd
 from scipy.stats import entropy, norm
 
 # import networkx package from tf5 source
-spec = importlib.util.spec_from_file_location("networkx", "../../packages/networkx/__init__.py")
+spec = importlib.util.spec_from_file_location("networkx", "../packages/networkx/__init__.py")
 nx = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(nx)
 # import networkx as nx
@@ -420,3 +420,51 @@ def history_finish(history_record, run, shortnames = True):
     if shortnames == False:
         pass
     return history_record
+
+
+def disentangle_admins(history, N):
+    """
+    analyse by which mechanism admins were created 
+    """
+    A_tot = [list(i[0]) for i in history["Administrators"]]
+    A_exp = history['Aexpl']
+    A_shk = list()
+    A_exp_add = list()
+    A_exp_rem = list()
+    A_null = list()
+    A_shk2 = history['Ashk']
+    A_shk2 = [[] if i[0] is None else i for i in A_shk2 ]
+    A_shk3 = list()
+    A_shk4 = set()
+    A_shk4_size = list()
+    A_exp_temp = set()
+    A_exp_size = list()
+
+    for i in np.arange(0, len(A_tot)):
+        A_exp_add.append([j for j in A_exp[i][0]])
+        A_exp_rem.append([j for j in A_exp[i][1]])
+
+    # calculate the administrators created by the mechanism
+    for i in np.arange(0, len(A_tot)):
+        A_shk.append(list(set(A_tot[i]).difference(set(A_tot[i-1])).difference(A_exp[i][0])))
+        A_shk4 = A_shk4.difference(A_exp_rem[i])
+        A_shk4 = A_shk4.union(A_shk2[i])
+        A_shk4_size.append(len(A_shk4))
+        A_exp_temp = A_exp_temp.union(set(A_exp_add[i]))
+        A_exp_temp = A_exp_temp.difference(set(A_exp_rem[i]))
+        A_exp_size.append(len(A_exp_temp))
+
+    data = {'x': np.arange(len(A_shk)),
+            'Admin': np.array([len(i[0]) for i in history['Administrators']])/N,
+            'A_shk_c': np.array([len(i) for i in A_shk])/N,
+            'A_shk': np.array([len(i) for i in A_shk2])/N,
+            'A_pool_shk': np.array(A_shk4_size)/N,
+            'A_pool_exp': np.array(A_exp_size)/N,
+            'A_exp_add': np.array([len(i) for i in A_exp_add])/N,
+            'A_exp_rem': np.array([len(i) for i in A_exp_rem])/N,
+            'A_exp': np.array([len(i) for i in A_exp_add]) -
+                np.array([len(i) for i in A_exp_rem])/N,
+            'Ecap': np.array(history['Energy per capita']),
+            'Access': np.array(history['access'])}
+
+    return data
