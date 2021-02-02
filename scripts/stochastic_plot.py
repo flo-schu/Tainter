@@ -75,9 +75,10 @@ ax1.annotate("A", xy=(0.005, 0.88), xycoords="axes fraction")
 ax1b.annotate("B", xy=(0.94, 0.88), xycoords="axes fraction")
 ax3.annotate("C", xy=(0.005, 0.88), xycoords="axes fraction")
 ax5.annotate("D", xy=(0.005, 0.88), xycoords="axes fraction")
-ax1.annotate("$p_{e}$ = 0", xy=(0.995, 0.88), xycoords="axes fraction",horizontalalignment="right")
-ax3.annotate("$p_{e}$ = 0.00275", xy=(0.995, 0.88), xycoords="axes fraction",horizontalalignment="right")
-ax5.annotate("$p_{e}$ = 0.02", xy=(0.995, 0.88), xycoords="axes fraction",horizontalalignment="right")
+# ax1.annotate("$p_{e}$ = 0", xy=(0.995, 0.88), xycoords="axes fraction",horizontalalignment="right")
+# ax3.annotate("$p_{e}$ = 0.00275", xy=(0.995, 0.88), xycoords="axes fraction",horizontalalignment="right")
+# ax5.annotate("$p_{e}$ = 0.02", xy=(0.995, 0.88), xycoords="axes fraction",horizontalalignment="right")
+
 
 
 # ------------------------------------------------------------------------------
