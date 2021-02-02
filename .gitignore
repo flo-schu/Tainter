@@ -16,6 +16,5 @@ __pycache__
 /venv/
 /data/
 /plots/
-/.idea/
 *.pkl
 *.pyc
