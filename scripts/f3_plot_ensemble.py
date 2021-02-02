@@ -49,7 +49,7 @@ beta = 15  # scale parameter of beta distribution
 alpha = 1  # location parameter of beta distribution
 
 base_folder = "../data/model/"
-folder = "20210202_2331"
+folder = "20210203_0014"
 sim_admin = ['base_admin.npy', 'inter_admin.npy', 'expl_admin.npy']
 sim_encap = ['base_ecap.npy', 'inter_ecap.npy', 'expl_ecap.npy']
 lines = ["dashed", "dotted", "dashdot"]

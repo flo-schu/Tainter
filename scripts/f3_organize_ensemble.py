@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 
-folder  = "../data/model/20210202_2331/" 
+folder  = "../data/model/20210203_0014/" 
 ddir = os.listdir(folder)
 dbase  = [j for j in ddir if "base" in j]
 dexpl  = [j for j in ddir if "expl" in j]
