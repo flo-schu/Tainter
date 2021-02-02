@@ -13,11 +13,13 @@
 import numpy as np
 import pandas as pd
 import pickle
+import os
 
 # data input and processing for upper subplots ---------------------------------
+path = "../data/cluster/2020xxxx/"
 print("Hello! Starting import...")
 objects = []
-with (open("output.pkl", "rb")) as openfile:
+with (open(os.path.join(path, "output.pkl"), "rb")) as openfile:
     while True:
         try:
             objects.append(pickle.load(openfile))
@@ -110,7 +112,7 @@ print("Column:" + cp + "--- nan_rows:", r_nan, "large_rows:", r_large)
 n_changed = np.sum(data-data_orig != 0)
 print(n_changed, "entries were changed.")
 
-np.save("output_interpol", data, allow_pickle=True)
+np.save(os.path.join(path, "output_interpol.npy"), data, allow_pickle=True)
 # np.savetxt("./output_corrected.txt", data, header="p_e, rho, phi, te, st",
 #            delimiter=",", newline="\n")
 
