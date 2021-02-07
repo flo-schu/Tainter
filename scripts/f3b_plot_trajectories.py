@@ -77,5 +77,5 @@ for c, lab, line, pe_it in zip(colors, labels, lines, pe_plot):
 ax1.legend(loc="center", bbox_to_anchor=(.5, .25), ncol=3, frameon=False)
 plt.subplots_adjust(left=0.07, right=0.97, bottom=0.17, top=0.98)
 # plt.savefig("../plots/pub_figure3_b.pdf")
-plt.savefig("../plots/pub_figure3_b.png", dpi=600)
+plt.savefig("../results/plots/pub_figure3_b.png", dpi=60)
 plt.show()

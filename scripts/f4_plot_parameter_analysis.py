@@ -168,7 +168,7 @@ for pe, ax in zip(pe_ax, [fu0, fu1, fu2, fu3]):
 
 plt.subplots_adjust(0.12, 0.09, 0.98, 0.98, 0.13, 0.31)
 # plt.savefig('../plots/pub_figure4.pdf')
-plt.savefig('../plots/pub_figure4.png', dpi=300)
+plt.savefig('../results/plots/pub_figure4.png', dpi=60)
 plt.show()
 # fl1 = fig.add_subplot(gs[2, 0:3])
 # fl1.cla()

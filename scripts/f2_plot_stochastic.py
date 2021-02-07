@@ -6,14 +6,15 @@ from matplotlib import cm, patches
 
 # choose which runs to plot ----------------------------------------------------
 # directories where simulation results are stored which are to be compared
-a = "20210203_0007"
-b = "20210203_0006"
-c = "20210203_0005"
+a = "20191121_1734"
+b = "20191121_1735"
+c = "20191121_1736"
 
 path = "../data/model/"
 data_a = pd.read_csv(os.path.join(path, a, "data.csv"))
 data_b = pd.read_csv(os.path.join(path, b, "data.csv"))
 data_c = pd.read_csv(os.path.join(path, c, "data.csv"))
+
 
 
 # set up figure ----------------------------------------------------------------
@@ -105,6 +106,6 @@ ax1b.set_xlim(0,0.3)
 
 
 # save -------------------------------------------------------------------------
-fig.savefig(os.path.join("../plots/", "pub_figure2.png"), dpi=300)
+fig.savefig(os.path.join("../results/plots/", "pub_figure2.png"), dpi = 65)
 plt.show()
 
