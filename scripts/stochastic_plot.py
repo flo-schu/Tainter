@@ -106,6 +106,6 @@ ax1b.set_xlim(0,0.3)
 
 
 # save -------------------------------------------------------------------------
-fig.savefig(os.path.join("../plots/", "pub_figure2.png"), dpi=300)
+fig.savefig(os.path.join("../results/plots/", "pub_figure2.png"), dpi=300)
 plt.show()
 
