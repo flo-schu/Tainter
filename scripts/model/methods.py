@@ -70,12 +70,12 @@ def node_origin(A,L,Lc,A2,L2,Lc2):
     return A_exp, L_exp, Lc_exp
 
 
-def energy_out_capita(a, L, Lc, eff, N):
+def energy_out_capita(a, L, Lc, elast_l, elast_lc, eff_lc, N):
     """
     compute the energy output averaged per capita after efficiency increase
     by the administration.
     """
-    E_cap = a * (len(L) + len(Lc)**eff) / N
+    E_cap = a * (len(L)**elast_l + eff_lc * len(Lc)**elast_lc) / N
     return E_cap
 
 def access(a,ainit,stress,shock):
@@ -158,7 +158,7 @@ def construct_network(network, N, k, p):
         print("no valid network. Please specify as networkx network or choose from 'watts', 'barabasi', 'erdos'")
     return G
 
-def init(N, stress, a, eff, tmax):
+def init(N, stress, a, elast_l, elast_lc, eff_lc, tmax):
     """
     creates sets for the classes of the network
     network is initialized with all nodes as L
@@ -179,7 +179,7 @@ def init(N, stress, a, eff, tmax):
     positions = list(zip(np.random.choice(N, size = N, replace = False),np.random.choice(N, size = N, replace = False)))
     
     # calculate initial
-    E_cap = a * (len(L) + len(Lc)**eff) / N
+    E_cap = energy_out_capita(a, L, Lc, elast_l, elast_lc, eff_lc, N)
     ainit = a
 
     return A, L, Lc, positions, E_cap, tmax, ainit, A_exp, L_exp, Lc_exp, Admin

@@ -17,7 +17,9 @@ def tainter(
     shock = ["off"],
     tmax = None,
     threshold = 1.0 ,
-    eff = 1.2 ,
+    elast_l = 0.95 ,
+    elast_lc = 0.95 ,
+    eff_lc = 1.2,
     death_energy_level = 0,
     print_every = None
     ):
@@ -102,7 +104,7 @@ def tainter(
     fct = inspect.stack()[0][3] # save function_name which is executed
 
     # Initialize function
-    A, L, Lc, positions, E_cap, tmax, ainit, A_exp, L_exp, Lc_exp, Admin = tm.init(N, stress, a, eff, tmax)
+    A, L, Lc, positions, E_cap, tmax, ainit, A_exp, L_exp, Lc_exp, Admin = tm.init(N, stress, a, elast_l, elast_lc, eff_lc, tmax)
     G = tm.construct_network(network, N, k, p)
     history = tm.init_history(A, L, Lc, E_cap, a, A_exp, L_exp, Lc_exp)
 
@@ -118,7 +120,7 @@ def tainter(
         a, bumm =tm.access(a,ainit, stress, shock)
 
         # Calculate the Energy per Capita
-        E_cap = tm.energy_out_capita(a-bumm, L, Lc, eff, N)
+        E_cap = tm.energy_out_capita(a-bumm, L, Lc, elast_l, elast_lc, eff_lc, N)
 
         # If E_cap below a threshold -> Admin selection mechanism
         if E_cap < threshold:
@@ -129,7 +131,7 @@ def tainter(
             if Admin != None:
                 L, Lc, A = tm.update_network(A, L, Lc, Admin, G)
 
-        E_cap = tm.energy_out_capita(a-bumm, L, Lc, eff, N)
+        E_cap = tm.energy_out_capita(a-bumm, L, Lc, elast_l, elast_lc, eff_lc, N)
 
         if print_every != None:
             tm.print_graph(print_every, t, A, Lc, L, G, positions, N)

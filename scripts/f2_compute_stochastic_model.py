@@ -16,11 +16,11 @@ from helpers.manage import icreate_folder_date
 
 # model parameters
 N = 400
-scenarios = [[0, "b"], [0.02, "e"]]
+scenarios = [[0, "b"], [0.2, "e"]]
 
 # script parameters
-path = "../data/model/"
-plot_time = 1500
+path = "data/model/"
+plot_time = 5000
 # random.seed(0)
 
 path = icreate_folder_date(path)
@@ -35,13 +35,15 @@ history, t, args, fct, merun, wb, G = tainter(
     layout = "fixed",
     first_admin = "highest degree" ,
     choice = "topcoordinated",
-    exploration = 0.0,
+    exploration = 0.2,
     a = 1.0 ,
     stress = ["off"] ,
     shock = ["on","beta",[1,15]],
     tmax = 10000,
     threshold =1.0 ,
-    eff = 1.05 ,
+    elast_l = 0.95 ,
+    elast_lc = 0.95 ,
+    eff_lc = 1.2 ,
     death_energy_level = 0.0,
     print_every = None
 )
