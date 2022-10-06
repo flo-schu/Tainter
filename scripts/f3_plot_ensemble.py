@@ -1,28 +1,34 @@
 import numpy as np
-import scipy.stats as sci
 from matplotlib import pyplot as plt
 from matplotlib import cm
 from scipy.integrate import odeint, trapz
+from approximation import f_a_2 as f_a
+from approximation import f_e_2 as f_e
 
 
-def f_a(x, t, N, p_e, epsilon, rho, phi, beta, alpha):
-    if x >= N:
-        return 0
-    else:
-        return (
-                p_e * (N - 2 * x) +
-                sci.beta.cdf(
-                    (((epsilon * N) / (((N - x) * (1 - rho) ** x) +
-                                       ((N - x) * (1 - (1 - rho) ** x)) ** phi))),
-                    a=beta, b=alpha)
-        )
+mri_setups = [
+    ("increasing_greater_coordinated", dict(elast_l=1.0, elast_lc=1.05, eff_lc=1.0)),
+    ("decreasing_equal", dict(elast_l=.8, elast_lc=.8, eff_lc=2)),
+    ("decreasing_equal_2", dict(elast_l=.95, elast_lc=.95, eff_lc=1.5)),
+    ("decreasing_higher_coordinated", dict(elast_l=.8, elast_lc=.85, eff_lc=1.5)),
+    ("decreasing_lower_coordinated", dict(elast_l=0.95, elast_lc=0.9, eff_lc=1.2))
+]
+
+scenario_name, scenario_pars = mri_setups[2]
 
 
-def f_e(x, N, rho, phi):
-    return (
-            ((N - x) * (1 - rho) ** x + ((N - x) * (1 - (1 - rho) ** x)) ** phi) / N
-    )
-
+# Data params
+fixed_params = dict(
+    N = 400,  # Network size
+    p_e = None,
+    epsilon = 1,  # threshold
+    rho = 0.02,  # link density in erdos renyi network
+    phi = scenario_pars["elast_lc"],  # efficiency of coordinated Workers
+    psi = scenario_pars["elast_l"],
+    c = scenario_pars["eff_lc"],
+    beta = 15,  # scale parameter of beta distribution
+    alpha = 1  # location parameter of beta distribution
+)
 
 def get_st(t, e):
     if all(np.round(e, 6) > 0):
@@ -31,25 +37,18 @@ def get_st(t, e):
         return int(np.where(np.round(e, 6) == 0)[0][0] + 1)
 
 
-def integrate_fa(t, p_e):
-    result = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha)).flatten()
+def integrate_fa(t, params):
+    N = params["N"]
+    result = odeint(f_a, y0=0, t=t, args=tuple(params.values())).flatten()
     result[result > N] = N  # turn all x > N to N (fix numerical issue)
-    e = f_e(result, N, rho, phi)
+    e = f_e(result, N, params["rho"], params["phi"], params["psi"], params["c"])
     st = get_st(t, e)
     te = trapz(e[:st], t[:st])
     return st, te, result, e
 
 
-# Data params
-N = 400  # Network size
-epsilon = 1  # threshold
-rho = 0.02  # link density in erdos renyi network
-phi = 1.05  # efficiency of coordinated Workers
-beta = 15  # scale parameter of beta distribution
-alpha = 1  # location parameter of beta distribution
-
-base_folder = "../data/model/"
-folder = "20191121_1732"
+base_folder = "data/model/"
+folder = "20220915_1517"
 sim_admin = ['base_admin.npy', 'inter_admin.npy', 'expl_admin.npy']
 sim_encap = ['base_ecap.npy', 'inter_ecap.npy', 'expl_ecap.npy']
 lines = ["dashed", "dotted", "dashdot"]
@@ -101,25 +100,21 @@ bbox[1] = 1.01*bbox[1] # shift bbox upwards
 bbox[3] = 0.9*bbox[3] # Reduce the height of the axis a bit.
 ax1.set_position(bbox)
 
-# ax1:
-for sa, c in zip(sim_admin, colors):
+# plot simulation (Stochastic)
+for sa, se, c in zip(sim_admin, sim_encap, colors):
     sim_a = np.load(base_folder + folder + "/" + sa)
-    ax1.plot(sim_a, color=cmap_a(c), alpha=alpha_sim)
-
-for c, lab, line, pe_it in zip(colors, labels, lines, pe_plot):
-    st, te, admin, ecap = integrate_fa(t, p_e=pe_it)
-    ax1.plot(t, admin / N, "-", color="white", linewidth=3, alpha=.5)
-    ax1.plot(t, admin / N, linestyle=line, color=cmap_a(c), linewidth=1.5, label=lab)
-
-# ax2:
-for se, c in zip(sim_encap, colors):
     sim_e = np.load(base_folder + folder + "/" + se)
     # print(sim_e[:,20])
+    ax1.plot(sim_a, color=cmap_a(c), alpha=alpha_sim)
     ax2.plot(sim_e, color=cmap_b(c), alpha=alpha_sim)
 
+# plot approximation
 for c, lab, line, pe_it in zip(colors, labels, lines, pe_plot):
-    st, te, admin, ecap = integrate_fa(t, p_e=pe_it)
+    fixed_params["p_e"] = pe_it
+    st, te, admin, ecap = integrate_fa(t=t, params=fixed_params)
     # print(ecap)
+    ax1.plot(t, admin / fixed_params["N"], "-", color="white", linewidth=3, alpha=.5)
+    ax1.plot(t, admin / fixed_params["N"], linestyle=line, color=cmap_a(c), linewidth=1.5, label=lab)
     ax2.plot(t, ecap, "-", color="white", linewidth=3, alpha=.5)
     ax2.plot(t, ecap, linestyle=line, color=cmap_b(c), linewidth=1.5, label=lab)
 
@@ -138,5 +133,5 @@ handles, labels = ax3.get_legend_handles_labels()
 ax3.legend(handles[::-1], labels[::-1], loc="center", bbox_to_anchor=(.5, .75), ncol=3, frameon=False)
 
 # plt.savefig(base_folder + folder + "/pub_figure3.pdf")
-plt.savefig("../results/plots/pub_figure3.png", dpi=60)
+plt.savefig(f"results/plots/pub_figure3_{scenario_name}.png", dpi=60)
 plt.show()

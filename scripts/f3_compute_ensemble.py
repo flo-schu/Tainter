@@ -1,16 +1,27 @@
 import os
 import pandas as pd
+import numpy as np
 import model.methods as tm
 from model.main import tainter
 from helpers.manage import icreate_folder_date
 
 N = 400
+mri_low = (
+    "decreasing_lower_coordinated", 
+    dict(elast_l=0.95, elast_lc=0.9, eff_lc=1.2)
+)
+mri_equal = (
+    "decreasing_equal", 
+    dict(elast_l=0.95, elast_lc=0.95, eff_lc=1.5)
+)
+
 scenarios = [[0, "b"], [0.00275, "i"], [0.02, "e"]]
-iterations = 3
+iterations = 50
 
 plot_time = 5000
-path = icreate_folder_date("../data/model")
+path = icreate_folder_date("data/model")
 
+np.random.seed(65421)
 # loop for repeting the same thing over and over again
 for i in range(iterations):
     print(i)
@@ -32,9 +43,9 @@ for i in range(iterations):
             shock = ["on","beta",[1,15]],
             tmax = 5000,
             threshold =1.0 ,
-            eff = 1.05 ,
             death_energy_level = 0.0,
-            print_every = None
+            print_every = None,
+            **mri_equal[1]
         )
 
         print(expl, t+1, wb, merun)

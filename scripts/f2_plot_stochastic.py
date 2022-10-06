@@ -10,7 +10,8 @@ import model.methods as tm
 # directories where simulation results are stored which are to be compared
 mri_setups = [
     ("increasing_greater_coordinated", dict(elast_l=1.0, elast_lc=1.05, eff_lc=1.0)),
-    ("decreasing_equal", dict(elast_l=0.95, elast_lc=0.95, eff_lc=1.2)),
+    ("decreasing_equal", dict(elast_l=.8, elast_lc=.8, eff_lc=2)),
+    ("decreasing_higher_coordinated", dict(elast_l=.8, elast_lc=.85, eff_lc=1.5)),
     ("decreasing_lower_coordinated", dict(elast_l=0.95, elast_lc=0.9, eff_lc=1.2))
 ]
 scenarios = [
@@ -38,7 +39,7 @@ for mri_name, mri_params in mri_setups:
             stress = ["off"] ,
             shock = ["on","beta",[1,15]],
             tmax = 10000,
-            threshold =1.0 ,
+            threshold = 0.5 ,
             death_energy_level = 0.0,
             print_every = None,
             **mri_params
