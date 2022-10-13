@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib import cm
-from model.main import tainter
-import model.methods as tm
+
+from tainter.model.simulation import tainter
+import tainter.model.methods as tm
 
 # choose which runs to plot ----------------------------------------------------
 # directories where simulation results are stored which are to be compared

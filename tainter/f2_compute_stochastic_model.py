@@ -1,18 +1,10 @@
 import os
-import pickle
 import random as random
-import shutil
-import sys
-import time as time
-
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import model.methods as tm
-import numpy as np
 import pandas as pd
-from matplotlib import cm
-from model.main import tainter
-from helpers.manage import icreate_folder_date
+
+import tainter.model.methods as tm
+from tainter.model.simulation import tainter
+from tainter.helpers.manage import icreate_folder_date
 
 # model parameters
 N = 400

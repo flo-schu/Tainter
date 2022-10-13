@@ -1,27 +1,8 @@
 import numpy as np
-import scipy.stats as sci
 from matplotlib import pyplot as plt
 from matplotlib import cm
 from scipy.integrate import odeint, trapz
-
-
-def f_a(x, t, N, p_e, epsilon, rho, phi, beta, alpha):
-    if x >= N:
-        return 0
-    else:
-        return (
-                p_e * (N - 2 * x) +
-                sci.beta.cdf(
-                    (((epsilon * N) / (((N - x) * (1 - rho) ** x) +
-                                       ((N - x) * (1 - (1 - rho) ** x)) ** phi))),
-                    a=beta, b=alpha)
-        )
-
-
-def f_e(x, N, rho, phi):
-    return (
-            ((N - x) * (1 - rho) ** x + ((N - x) * (1 - (1 - rho) ** x)) ** phi) / N
-    )
+from tainter.model.approximation import f_admin, f_energy
 
 
 def get_st(t, e):
@@ -32,9 +13,9 @@ def get_st(t, e):
 
 
 def integrate_fa(t, p_e):
-    result = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha)).flatten()
+    result = odeint(f_admin, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha)).flatten()
     result[result > N] = N  # turn all x > N to N (fix numerical issue)
-    e = f_e(result, N, rho, phi)
+    e = f_energy(result, N, rho, phi)
     st = get_st(t, e)
     te = trapz(e[:st], t[:st])
     return st, te, result, e

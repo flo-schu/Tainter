@@ -2,8 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import cm
 from scipy.integrate import odeint, trapz
-from approximation import f_a_2 as f_a
-from approximation import f_e_2 as f_e
+from tainter.model.approximation import f_admin, f_energy
 
 
 mri_setups = [
@@ -39,9 +38,9 @@ def get_st(t, e):
 
 def integrate_fa(t, params):
     N = params["N"]
-    result = odeint(f_a, y0=0, t=t, args=tuple(params.values())).flatten()
+    result = odeint(f_admin, y0=0, t=t, args=tuple(params.values())).flatten()
     result[result > N] = N  # turn all x > N to N (fix numerical issue)
-    e = f_e(result, N, params["rho"], params["phi"], params["psi"], params["c"])
+    e = f_energy(result, N, params["rho"], params["phi"], params["psi"], params["c"])
     st = get_st(t, e)
     te = trapz(e[:st], t[:st])
     return st, te, result, e

@@ -1,6 +1,6 @@
 import inspect
 import numbers as numbers
-import model.methods as tm
+import tainter.model.methods as tm
 
 def tainter(  
     network = "watts" ,

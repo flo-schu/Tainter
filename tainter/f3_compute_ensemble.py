@@ -2,8 +2,8 @@ import os
 import pandas as pd
 import numpy as np
 import model.methods as tm
-from model.main import tainter
-from helpers.manage import icreate_folder_date
+from tainter.model.simulation import tainter
+from tainter.helpers.manage import icreate_folder_date
 
 N = 400
 mri_low = (
