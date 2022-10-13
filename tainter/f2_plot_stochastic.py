@@ -3,35 +3,34 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib import cm
-
 from tainter.model.simulation import tainter
 import tainter.model.methods as tm
 
 # choose which runs to plot ----------------------------------------------------
 # directories where simulation results are stored which are to be compared
-mri_setups = [
-    ("increasing_greater_coordinated", dict(elast_l=1.0, elast_lc=1.05, eff_lc=1.0)),
-    ("decreasing_equal", dict(elast_l=.8, elast_lc=.8, eff_lc=2)),
-    ("decreasing_higher_coordinated", dict(elast_l=.8, elast_lc=.85, eff_lc=1.5)),
-    ("decreasing_lower_coordinated", dict(elast_l=0.95, elast_lc=0.9, eff_lc=1.2))
-]
-scenarios = [
-    [0.0, "base"], [0.00275, "exploration low"],  [0.02, "exploration high"]
-]
-N = 400
-plot_time = 5000
-np.random.seed(8975)
 
-for mri_name, mri_params in mri_setups:
+def fig2_stochastic_simulations(
+    seed=None,
+    exploration_setups=[],
+    plot_time=5000,
+    network_size=400, 
+    link_probability_between_nodes=0.02,
+    mri_of_laborers=0.8,
+    mri_of_coordinated_laborers=0.8,
+    efficiency_of_coordinated_laborers=1.2,
+    **simulation_kwargs
+):
+    np.random.seed(seed)
+
     results = []
-    for explo, sname in scenarios:
+    for explo, sname in exploration_setups:
         history, t, args, fct, merun, wb, G = tainter(
             # with erdos reny networks it is possible that some nodes are not 
             # linked and the model runs for ever
             network = "erdos" , 
-            N = N,
+            N = network_size,
             k = 0,
-            p = 0.02,
+            p = link_probability_between_nodes,
             layout = "fixed",
             first_admin = "highest degree" ,
             choice = "topcoordinated",
@@ -43,7 +42,10 @@ for mri_name, mri_params in mri_setups:
             threshold = 0.5 ,
             death_energy_level = 0.0,
             print_every = None,
-            **mri_params
+            elast_l=mri_of_laborers,
+            elast_lc=mri_of_coordinated_laborers,
+            eff_lc=efficiency_of_coordinated_laborers,
+            **simulation_kwargs
         )
 
 
@@ -51,10 +53,10 @@ for mri_name, mri_params in mri_setups:
         history_b = history.copy()
         history = {key: value[0:plot_time] for key, value in history_b.items()}
 
-        data = tm.disentangle_admins(history, N)
+        data = tm.disentangle_admins(history, network_size)
 
         results.append(pd.DataFrame(data))
-        print(f"executed scenario {mri_name} with exploration = {explo}")
+        print(f"executed scenario with exploration = {explo}")
 
 
     # set up figure ----------------------------------------------------------------
@@ -74,7 +76,7 @@ for mri_name, mri_params in mri_setups:
 
     # plot figure ------------------------------------------------------------------
     for i, (ax, d, scenario) in enumerate(
-        zip([(ax1, ax2), (ax3, ax4), (ax5, ax6)], results, scenarios)):
+        zip([(ax1, ax2), (ax3, ax4), (ax5, ax6)], results, exploration_setups)):
         ax[0].plot(np.array(d['x']), np.array(d['Admin']), ls='-', fillstyle='none',
                 color=cmap_a(3), label="$A_{total}$")
         ax[0].fill_between(np.array(d['x']), np.array(d['A_pool_shk']), alpha=.5,
@@ -106,7 +108,7 @@ for mri_name, mri_params in mri_setups:
     fig.text(0.99, 0.5, 'Energy per capita', ha='center',
             va='center', rotation='vertical')
     fig.text(0.5, 0.01, 'Time', ha='center', va='center')
-    fig.subplots_adjust(bottom=0.08, left=0.06, right=0.94, top=.95)
+    # fig.subplots_adjust(bottom=0.08, left=0.06, right=0.94, top=.95)
 
     ahandles, alabels = ax1.get_legend_handles_labels()
     ehandles, elabels = ax2.get_legend_handles_labels()
@@ -144,7 +146,6 @@ for mri_name, mri_params in mri_setups:
     ax1b.set_ylim(0.85,1.1)
     ax1b.set_xlim(0,0.3)
 
-
+    return fig
     # save -------------------------------------------------------------------------
-    fig.savefig(os.path.join("results/plots/", f"pub_figure2_{mri_name}.png"), dpi = 65)
 
