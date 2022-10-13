@@ -23,7 +23,7 @@ def fig2_stochastic_simulations(
     np.random.seed(seed)
 
     results = []
-    for explo, sname in exploration_setups:
+    for explo in exploration_setups:
         history, t, args, fct, merun, wb, G = tainter(
             # with erdos reny networks it is possible that some nodes are not 
             # linked and the model runs for ever
@@ -64,7 +64,7 @@ def fig2_stochastic_simulations(
     cmap_e = cm.get_cmap("Oranges", 4)
     textwidth = 12.12537
     plt.rcParams.update({'font.size': 14})
-    fig = plt.figure(constrained_layout=True, figsize=(textwidth, textwidth / 2))
+    fig = plt.figure(figsize=(textwidth, textwidth / 2))
     gs =  fig.add_gridspec(3, 3)
     ax1 = fig.add_subplot(gs[0,0:2])
     ax2 = ax1.twinx()
@@ -75,7 +75,7 @@ def fig2_stochastic_simulations(
     ax6 = ax5.twinx()
 
     # plot figure ------------------------------------------------------------------
-    for i, (ax, d, scenario) in enumerate(
+    for i, (ax, d, explo_) in enumerate(
         zip([(ax1, ax2), (ax3, ax4), (ax5, ax6)], results, exploration_setups)):
         ax[0].plot(np.array(d['x']), np.array(d['Admin']), ls='-', fillstyle='none',
                 color=cmap_a(3), label="$A_{total}$")
@@ -89,7 +89,7 @@ def fig2_stochastic_simulations(
                 color=cmap_e(2), label="$E_{prodcution}$")
         ax[0].set_ylim(0, 1.25)
         ax[1].set_ylim(0, 1.25)
-        ax[0].annotate(f"$p_{{e}}$ = {scenario[0]}", xy=(0.995, 0.88), xycoords="axes fraction",horizontalalignment="right")
+        ax[0].annotate(f"$p_{{e}}$ = {explo_}", xy=(0.995, 0.88), xycoords="axes fraction",horizontalalignment="right")
 
         if i == 0:
             ax[0].set_xlim(0, 3250)
@@ -108,7 +108,7 @@ def fig2_stochastic_simulations(
     fig.text(0.99, 0.5, 'Energy per capita', ha='center',
             va='center', rotation='vertical')
     fig.text(0.5, 0.01, 'Time', ha='center', va='center')
-    # fig.subplots_adjust(bottom=0.08, left=0.06, right=0.94, top=.95)
+    fig.subplots_adjust(bottom=0.08, left=0.06, right=0.94, top=.95)
 
     ahandles, alabels = ax1.get_legend_handles_labels()
     ehandles, elabels = ax2.get_legend_handles_labels()
