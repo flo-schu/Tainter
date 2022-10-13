@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tainter"
+version = "0.1.0"
+authors = [
+  { name="Florian Schunck", email="fluncki@protonmail.com" },
+]
+description = "Tainter is a package for that implements a stylized model of Joseph Tainter's theory of societal collapse"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Natural Language :: English",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/flo-schu/tainter"
+"Issue Tracker" = "https://github.com/flo-schu/tainter/issues"
+
+
+[tool.setuptools.packages.find]
+# All the following settings are optional:
+where = ["."]  # ["."] by default
+include = ["tainter", "scripts"]  # ["."] by default
+exclude = []  # empty by default
+namespaces = true  # true by default
