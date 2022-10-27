@@ -18,6 +18,9 @@ def fig2_stochastic_simulations(
     mri_of_laborers=0.8,
     mri_of_coordinated_laborers=0.8,
     efficiency_of_coordinated_laborers=1.2,
+    threshold_for_complexity_increase=0.5,
+    shock_alpha=1,
+    shock_beta=15,
     **simulation_kwargs
 ):
     np.random.seed(seed)
@@ -37,9 +40,9 @@ def fig2_stochastic_simulations(
             exploration = explo,
             a = 1.0 ,
             stress = ["off"] ,
-            shock = ["on","beta",[1,15]],
+            shock = ["on","beta",[shock_alpha,shock_beta]],
             tmax = 10000,
-            threshold = 0.5 ,
+            threshold = threshold_for_complexity_increase,
             death_energy_level = 0.0,
             print_every = None,
             elast_l=mri_of_laborers,
