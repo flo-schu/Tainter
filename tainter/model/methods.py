@@ -1,7 +1,6 @@
 import importlib.util
 import os
 import pickle as pickle
-import random
 import tkinter as tk
 from collections import Counter
 from tkinter import filedialog
@@ -78,35 +77,12 @@ def energy_out_capita(a, L, Lc, elast_l, elast_lc, eff_lc, N):
     E_cap = a * (len(L)**elast_l + eff_lc * len(Lc)**elast_lc) / N
     return E_cap
 
-def access(a,ainit,stress,shock):
+def shock(shock_alpha, shock_beta):
     """
-    computes the availability based on the stress parameter passed in the 
-    function call. If a is random. It is important that the initial access 
-    is always 1
+    computes the availability based on the beta distributed shocks
     """
-    if stress[0] == "on":
-        if stress[1] == "linear":
-            a -= stress[2]
-        elif stress[1] =="percent":
-            a = a * (1-stress[2])
-        else:
-            pass
-    else:
-        pass
 
-    if shock[0] == "on":
-        if shock[1] =="beta":
-            # ggf economic shocks installieren
-            bumm = random.betavariate(shock[2][0],shock[2][1])
-        elif shock[1] == "occasionalrecovery":
-            if np.random.choice([1,0],p=shock[3]):
-                bumm = shock[2]
-            else:
-                pass
-    else:
-        bumm = 0.0
-
-    return a, bumm
+    return np.random.beta(shock_alpha, shock_beta)
 
 def total_energy(history):
     tot_energy = np.sum(history['Energy per capita'])
@@ -138,7 +114,7 @@ def complexity(G, N):
     C = entropy(a)
     return C
 
-def construct_network(network, N, k, p):
+def construct_network(network, N, k=None, p=None):
     """
     in this function, one of each networks "barabasi, watts, or erdos" is computed
     network defines the type of network (one of the above)
@@ -158,7 +134,7 @@ def construct_network(network, N, k, p):
         print("no valid network. Please specify as networkx network or choose from 'watts', 'barabasi', 'erdos'")
     return G
 
-def init(N, stress, a, elast_l, elast_lc, eff_lc, tmax):
+def init(N, a, elast_l, elast_lc, eff_lc, tmax):
     """
     creates sets for the classes of the network
     network is initialized with all nodes as L
@@ -252,7 +228,7 @@ def exploration(G, A, L, Lc, N, exploration ):
     afterwards recalculated.
     """
     for i in range(N):
-        if exploration > random.random():
+        if exploration > np.random.random():
             if i in A:
                 A.remove(i)
                 L.add(i)
@@ -321,7 +297,7 @@ def crosslinks(G, A, L, Lc):
     crosslinks = len(G.edges) - len(GA.edges) - len(GnonA.edges)
     return crosslinks
 
-def print_graph(print_every, t, A, Lc, L, G, positions, N, layout = "spring"):
+def print_graph(t, A, Lc, L, G, positions, N, layout = "spring", print_every=1):
     """prints graph every n runs. Layout can be chosen from 'spring' and 
     'fixed' 
     """

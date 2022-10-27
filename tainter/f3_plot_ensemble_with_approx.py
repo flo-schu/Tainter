@@ -1,6 +1,8 @@
 import os
-import json
 import textwrap
+import json
+import random
+import warnings
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -25,6 +27,7 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
     mri_of_laborers=0.8,
     mri_of_coordinated_laborers=0.8,
     efficiency_of_coordinated_laborers=1.2,
+    resource_access=1.0,
     threshold_for_complexity_increase=0.5,
     shock_alpha=1,
     shock_beta=15,
@@ -33,7 +36,28 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
 ):
     if not use_pre_simulated_data:
         np.random.seed(seed)
-        os.makedirs(ensemble_data, exist_ok=True)
+        random.seed(seed)
+        if os.path.exists(ensemble_data):
+            pre_simulated_files = os.listdir(ensemble_data)
+            if len(pre_simulated_files) > 0:
+                warnings.warn(textwrap.dedent("""
+                    you are about to overwrite pre-simulated data. If you continue,
+                    all pre-simulated data will be deleted. Press ('y' to do so).
+                    If you press 'n' (or 'enter'), the function will stop,
+                    please restart with a new argument 'ensemble_data'.
+                """))
+                while True:
+                    answer = input("\noverwrite? (y/n)")
+                    if answer == "y":
+                        [os.remove(os.path.join(ensemble_data, f)) 
+                            for f in pre_simulated_files]
+                        break
+                    elif answer == "n" or answer == "":
+                        raise FileExistsError("specify new argument 'ensemble_data'")
+
+        else:
+            os.makedirs(ensemble_data)
+
 
         # loop for repeting the same thing over and over again
         with tqdm(total=iterations * len(exploration_setups)) as pbar:
@@ -53,9 +77,9 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
                         first_admin = "highest degree" ,
                         choice = "topcoordinated",
                         exploration = exploration_rate,
-                        a = 1.0 ,
-                        stress = ["off"] ,
-                        shock = ["on","beta",[shock_alpha,shock_beta]],
+                        resource_access = resource_access ,
+                        shock_alpha=shock_alpha,
+                        shock_beta=shock_beta,
                         tmax = 10000,
                         threshold = threshold_for_complexity_increase,
                         death_energy_level = 0.0,
@@ -87,8 +111,8 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
                     ))
                     pbar.update(1)
 
-
-        json.dump(args, os.path.join(ensemble_data, "parameters.json"))
+        with open(os.path.join(ensemble_data, "parameters.json"), "w") as f:
+            json.dump(args, f, indent=4)
 
     # Data params
     fixed_params = dict(

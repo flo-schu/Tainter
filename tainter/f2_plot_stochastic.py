@@ -1,4 +1,5 @@
 import os
+import random
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -18,12 +19,14 @@ def fig2_stochastic_simulations(
     mri_of_laborers=0.8,
     mri_of_coordinated_laborers=0.8,
     efficiency_of_coordinated_laborers=1.2,
+    resource_access=1.0,
     threshold_for_complexity_increase=0.5,
     shock_alpha=1,
     shock_beta=15,
     **simulation_kwargs
 ):
     np.random.seed(seed)
+    random.seed(seed)
 
     results = []
     for explo in exploration_setups:
@@ -38,9 +41,9 @@ def fig2_stochastic_simulations(
             first_admin = "highest degree" ,
             choice = "topcoordinated",
             exploration = explo,
-            a = 1.0 ,
-            stress = ["off"] ,
-            shock = ["on","beta",[shock_alpha,shock_beta]],
+            resource_access = resource_access ,
+            shock_alpha=shock_alpha,
+            shock_beta=shock_beta,
             tmax = 10000,
             threshold = threshold_for_complexity_increase,
             death_energy_level = 0.0,

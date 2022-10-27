@@ -5,16 +5,16 @@ import tainter.model.methods as tm
 def tainter(  
     network = "watts" ,
     N = 100,
-    k = 5,
-    p = 0.05,
+    k = None,
+    p = None,
     layout = "spring",
     first_admin = "random" ,
     choice = "topworker",
     exploration = 0.0,
     mepercent = 0.75,
-    a = 1.0 ,
-    stress = ["off"] ,
-    shock = ["off"],
+    resource_access = 1.0 ,
+    shock_alpha=1,
+    shock_beta=15,
     tmax = None,
     threshold = 1.0 ,
     elast_l = 0.95 ,
@@ -22,7 +22,7 @@ def tainter(
     eff_lc = 1.2,
     death_energy_level = 0,
     print_every = None
-    ):
+):
     """
     This function implements a dynamic population to the network
 
@@ -73,16 +73,10 @@ def tainter(
         sets the percentage of nodes dying each loop
 
     a = 1.0
-        access to resource (between 0 and 1) TODO: create fn. Default 1.0:
-        inital access to resource.
-
-    stress = 0.0
-        Between 0 and 1: reduction of productivity, induced by´stress. can be
-        many concepts (population increase, declining ease of extraction, etc.)
-        default = 0.0 no stress.
+        access to resource (between 0 and 1) 
 
     tmax
-        integer optional. Overwrites stress variable. If set, the model breaks
+        integer optional. If set, the model breaks
         after tmax timesteps
 
     threshold = 1.0
@@ -104,9 +98,9 @@ def tainter(
     fct = inspect.stack()[0][3] # save function_name which is executed
 
     # Initialize function
-    A, L, Lc, positions, E_cap, tmax, ainit, A_exp, L_exp, Lc_exp, Admin = tm.init(N, stress, a, elast_l, elast_lc, eff_lc, tmax)
+    A, L, Lc, positions, E_cap, tmax, ainit, A_exp, L_exp, Lc_exp, Admin = tm.init(N, resource_access, elast_l, elast_lc, eff_lc, tmax)
     G = tm.construct_network(network, N, k, p)
-    history = tm.init_history(A, L, Lc, E_cap, a, A_exp, L_exp, Lc_exp)
+    history = tm.init_history(A, L, Lc, E_cap, resource_access, A_exp, L_exp, Lc_exp)
 
     for t in range(tmax):
         A_2 = A.copy()
@@ -116,11 +110,15 @@ def tainter(
         A, L, Lc = tm.exploration(G, A, L, Lc, N, exploration )
         A_exp, L_exp, Lc_exp = tm.node_origin(A,L,Lc,A_2,L_2,Lc_2)
 
-        # Environmental Stress or Shocks
-        a, bumm =tm.access(a,ainit, stress, shock)
+        # Environmental Shocks
+        shock = tm.shock(shock_alpha, shock_beta)
+
+        # this is a more general form of resource reduction which scales
+        # with resource access. 
+        access_after_shock = resource_access * (1 - shock)
 
         # Calculate the Energy per Capita
-        E_cap = tm.energy_out_capita(a-bumm, L, Lc, elast_l, elast_lc, eff_lc, N)
+        E_cap = tm.energy_out_capita(access_after_shock, L, Lc, elast_l, elast_lc, eff_lc, N)
 
         # If E_cap below a threshold -> Admin selection mechanism
         if E_cap < threshold:
@@ -131,12 +129,12 @@ def tainter(
             if Admin != None:
                 L, Lc, A = tm.update_network(A, L, Lc, Admin, G)
 
-        E_cap = tm.energy_out_capita(a-bumm, L, Lc, elast_l, elast_lc, eff_lc, N)
+        E_cap = tm.energy_out_capita(access_after_shock, L, Lc, elast_l, elast_lc, eff_lc, N)
 
         if print_every != None:
-            tm.print_graph(print_every, t, A, Lc, L, G, positions, N)
+            tm.print_graph(t, A, Lc, L, G, positions, N, layout=layout, print_every=print_every)
 
-        tm.update_history(history, A, L, Lc, E_cap, a-bumm, A_exp,L_exp, Lc_exp,Admin)
+        tm.update_history(history, A, L, Lc, E_cap, access_after_shock, A_exp,L_exp, Lc_exp,Admin)
         Admin = None
 
         if E_cap <= death_energy_level:
