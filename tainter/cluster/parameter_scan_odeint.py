@@ -12,96 +12,84 @@
 # ------------------------------------------------------------------------------
 
 import sys
+import os
+import json
 import numpy as np
-import scipy.stats as sci
-from scipy.integrate import odeint
-from scipy.integrate import trapz
+from tainter.model.approximation import integrate_fa
 
 # environmental variables -----------------------------------------------------
-paramfile = sys.argv[1]
-output_dir = sys.argv[2]
-njob = int(sys.argv[3])
 
-print(paramfile, output_dir, njob)
+def parameter_scan(
+    output_dir, 
+    njob, 
+    parameters,
+):
+    print(parameters, output_dir, njob)
 
-# Parameters ------------------------------------------------------------------
-N = 400  # Network size
-epsilon = 1  # threshold
-beta = 15  # scale parameter of beta distribution
-alpha = 1  # location parameter of beta distribution
-# p_e, rho, phi
-params = np.loadtxt(paramfile, delimiter=",")
+    # Parameters ------------------------------------------------------------------
 
+    # load approximation params, order is important here
+    with open(os.path.join(output_dir, "approx_params.json"), "r") as f:
+        fixed_params = json.load(f)
 
-# Definition Equations --------------------------------------------------------
-def f_a(x, t, N, p_e, epsilon, rho, phi, beta, alpha):
-    if x >= N:
-        return 0
-    else:
-        return (
-                p_e * (N - 2 * x) +
-                sci.beta.cdf(
-                    (((epsilon * N) / (((N - x) * (1 - rho) ** x) +
-                                       ((N - x) * (1 - (1 - rho) ** x)) ** phi))),
-                    a=beta, b=alpha)
-        )
+    print(fixed_params)
 
-
-def f_e(x, N, rho, phi):
-    return (
-            ((N - x) * (1 - rho) ** x + ((N - x) * (1 - (1 - rho) ** x)) ** phi) / N
+    # load variable parameter file
+    params = np.loadtxt(
+        os.path.join(output_dir, f"params_{str(njob).zfill(4)}.txt"), 
+        delimiter=","
     )
 
 
-def get_st(t, e):
-    if all(np.round(e, 6) > 0):
-        return int(np.max(t))
-    else:
-        return int(np.where(np.round(e, 6) == 0)[0][0]+1)
 
+    # # Debugging: -------------------------------------------------------------------
+    # import matplotlib.pyplot as plt
+    # t = np.linspace(0, 10000, 10001)
+    # par = [0.0027,0.002,1.333]
+    # p_e, rho, phi = par[0], par[1], par[2]
+    # result = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha))
+    # result[result > N] = N  # turn all x > N to N (fix numerical issue)
+    # e = f_e(result[:, 0], N, rho, phi)
+    # st = get_st(t, e)
+    # te = trapz(e[:st], t[:st])
 
-# Debugging: -------------------------------------------------------------------
-import matplotlib.pyplot as plt
-t = np.linspace(0, 10000, 10001)
-par = [0.0027,0.002,1.333]
-p_e, rho, phi = par[0], par[1], par[2]
-result = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha))
-result[result > N] = N  # turn all x > N to N (fix numerical issue)
-e = f_e(result[:, 0], N, rho, phi)
-st = get_st(t, e)
-te = trapz(e[:st], t[:st])
+    # print("| pe, rho, phi:", par, "-- st:", st, "-- te:", np.round(te, 18), "-- min_e:", np.round(np.min(e), 2), flush=True)
 
-print("| pe, rho, phi:", par, "-- st:", st, "-- te:", np.round(te, 18), "-- min_e:", np.round(np.min(e), 2), flush=True)
+    # plt.cla()
+    # plt.plot(t, result/N, label="a")
+    # plt.plot(t, e, label="e")
+    # plt.legend()
+    # plt.xscale('log')
+    # plt.show()
 
-plt.cla()
-plt.plot(t, result/N, label="a")
-plt.plot(t, e, label="e")
-plt.legend()
-plt.xscale('log')
-plt.show()
+    # input("stop.")
+    # # ------------------------------------------------------------------------------
 
-input("stop.")
-# ------------------------------------------------------------------------------
+    t = np.linspace(0, 10000, 10001)
+    data = []
 
-t = np.linspace(0, 10000, 10001)
-data = []
+    for i in range(len(params)):
+        par = list(params[i])
 
-for i in range(len(params)):
-    par = params[i]
-    p_e, rho, phi = par[0], par[1], par[2]
-    result = odeint(f_a, y0=0, t=t, args=(N, p_e, epsilon, rho, phi, beta, alpha),
-                    full_output=False)
-    result[result > N] = N  # turn all x > N to N (fix numerical issue)
-    e = f_e(result[:, 0], N, rho, phi)
-    st = get_st(t, e)
-    te = trapz(e[:st], t[:st])
+        # set parameters 
+        for pname, pval in zip(parameters, par):
+            fixed_params[pname] = pval
 
-    data.append(np.array([p_e, rho, phi, te, st]))
-    print("#", str(i).zfill(5), "| pe, rho, phi:", np.round(par, 3), "-- st:", st,
-          "-- te:", np.round(te,0), "-- min_e:", np.round(np.min(e),2), flush=True)
+        st, te, result, e = integrate_fa(t, fixed_params)
+        data.append(np.array(par + [te, st]))
+        print("#", str(i).zfill(5), f"| {parameters}:", np.round(params[i], 3), "-- st:", st,
+            "-- te:", np.round(te,0), "-- min_e:", np.round(np.min(e),2), flush=True)
 
-data = np.array(data)
-np.savetxt(output_dir + "/chunk_" + str(njob).zfill(4) + ".txt", data,
-           delimiter=",", newline="\n")
+    data = np.array(data)
+    np.savetxt(
+        os.path.join(output_dir, "result_" + str(njob).zfill(4) + ".txt"),
+        data,
+        delimiter=",", newline="\n"
+    )
 
-print("python script executed correctly.")
+if __name__ == "__main__":
+    paramfile = sys.argv[1]
+    output_dir = sys.argv[2]
+    njob = int(sys.argv[3])
+
+    parameter_scan(paramfile=paramfile, output_dir=output_dir, njob=njob)

@@ -23,8 +23,8 @@ def fig3b_administrator_trajectories(
         phi = mri_of_coordinated_laborers,  # efficiency of coordinated Workers
         psi = mri_of_laborers,
         c = efficiency_of_coordinated_laborers,
-        beta = shock_alpha,  # scale parameter of beta distribution
-        alpha = shock_beta  # location parameter of beta distribution
+        beta = shock_beta,  # scale parameter of beta distribution
+        alpha = shock_alpha  # location parameter of beta distribution
     )
 
     # Data params

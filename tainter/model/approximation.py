@@ -7,7 +7,7 @@ def f_admin(x, t, N, p_e, rho, phi, psi, c, beta, alpha):
     x is the number of administrators
     """
     if x >= N:
-        return 0
+        return N
     else:
         return (
             p_e * (N - 2 * x) +
