@@ -106,5 +106,10 @@ def process_output(directory):
 if __name__ == "__main__":
     output_dir = sys.argv[1]
     njob = int(sys.argv[2])
+    par1 = sys.argv[3]
+    par2 = sys.argv[4]
+    par3 = sys.argv[5]
+    print("out:", output_dir, "Job:", njob)
 
-    parameter_scan(output_dir=output_dir, njob=njob)
+    parameter_scan(output_dir=output_dir, njob=njob,
+        parameters=[par1, par2, par3])
