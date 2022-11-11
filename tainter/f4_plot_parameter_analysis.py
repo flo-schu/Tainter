@@ -28,7 +28,8 @@ from tainter.cluster.parameter_scan_odeint import process_output
 def fig4_parameter_analysis(
     data_directory="data/parameter_analysis",
     parameters=["\rho", "p_e", "c"],
-    multiline_steps=[1, 1.05, 1.07, 1.1, 1.15, 1.18, 1.19, 1.195]
+    panel_steps=[0, 1e-4, 5e-4, 5e-3],
+    multiline_steps=[],
 ):
     data = process_output(data_directory)
     colnames = np.array(["par_1","par_2", "par_3", "te", "st"])
@@ -41,6 +42,12 @@ def fig4_parameter_analysis(
     npar_1 = np.unique(par_1)
     npar_2 = np.unique(par_2)
     npar_3 = np.unique(par_3)
+
+    if len(multiline_steps) == 0:
+        multiline_steps = np.linspace(
+            npar_3.min(), npar_3.max(), num=10
+        )
+
 
     print(len(data), len(npar_1), len(npar_2), len(npar_3))
 
@@ -67,15 +74,14 @@ def fig4_parameter_analysis(
 
     # lower subplots
     # filter darr
-    lim_phi = 1.3
-    npar_3 = npar_3[npar_3 < lim_phi]
+    # npar_3 = npar_3[npar_3 < lim_phi]
 
     darr = darr[:, :, range(len(npar_3)), :]
 
     # PLOT #########################################################################
 
     # parameters
-    plot_pe = npar_1.searchsorted([0, 1e-4, 5e-4, 5e-3])  # indices of tested pe values
+    plot_pe = npar_1.searchsorted(panel_steps)  # indices of tested pe values
     labels = {"st": ("$B_1$", "$B_2$", "$B_3$", "$B_4$")}
 
     # color ranges
@@ -106,7 +112,8 @@ def fig4_parameter_analysis(
         contour_phi = np.flipud(darr[pe, :, :, np.where(colnames == "par_3")[0][0]].T)
         contour_stlim = np.flipud(darr[pe, :, :, np.where(colnames == "st")[0][0]].T)
         im = ax.imshow(grid, extent=(min(npar_2), max(npar_2), min(npar_3), max(npar_3)),
-                    vmin=0, vmax=c_st.max() - 1, cmap=cmap)
+                    vmin=0, vmax=c_st.max() - 1, cmap=cmap,
+                    aspect="auto")
         ax.contour(contour_rho, contour_phi, contour_stlim,
                 levels=np.array([9999]), linestyles="-", colors="black")
         if lab != "$B_1$": ax.yaxis.set_ticklabels([])

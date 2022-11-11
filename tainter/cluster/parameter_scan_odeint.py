@@ -104,8 +104,7 @@ def process_output(directory):
 
 
 if __name__ == "__main__":
-    paramfile = sys.argv[1]
-    output_dir = sys.argv[2]
-    njob = int(sys.argv[3])
+    output_dir = sys.argv[1]
+    njob = int(sys.argv[2])
 
-    parameter_scan(paramfile=paramfile, output_dir=output_dir, njob=njob)
+    parameter_scan(output_dir=output_dir, njob=njob)
