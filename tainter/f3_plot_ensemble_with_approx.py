@@ -11,8 +11,7 @@ from tqdm import tqdm
 
 import tainter.model.methods as tm
 from tainter.model.simulation import tainter
-from scipy.integrate import odeint, trapz
-from tainter.model.approximation import f_admin, f_energy
+from tainter.model.approximation import integrate_fa, get_st
 
 
 def fig3_stochastic_ensemble_and_macroscopic_approximation(
@@ -27,8 +26,6 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
     mri_of_laborers=0.8,
     mri_of_coordinated_laborers=0.8,
     efficiency_of_coordinated_laborers=1.2,
-    resource_access=1.0,
-    threshold_for_complexity_increase=0.5,
     shock_alpha=1,
     shock_beta=15,
     **simulation_kwargs
@@ -77,11 +74,9 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
                         first_admin = "highest degree" ,
                         choice = "topcoordinated",
                         exploration = exploration_rate,
-                        resource_access = resource_access ,
                         shock_alpha=shock_alpha,
                         shock_beta=shock_beta,
                         tmax = 10000,
-                        threshold = threshold_for_complexity_increase,
                         death_energy_level = 0.0,
                         print_every = None,
                         elast_l=mri_of_laborers,
@@ -118,7 +113,6 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
     fixed_params = dict(
         N = network_size,  # Network size
         p_e = 0.0,  # default value
-        epsilon = threshold_for_complexity_increase,  # threshold
         rho = link_probability_between_nodes,  # link density in erdos renyi network
         phi = mri_of_coordinated_laborers,  # efficiency of coordinated Workers
         psi = mri_of_laborers,
@@ -127,21 +121,6 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
         alpha = shock_beta  # location parameter of beta distribution
     )
 
-    def get_st(t, e):
-        if all(np.round(e, 6) > 0):
-            return int(np.max(t))
-        else:
-            return int(np.where(np.round(e, 6) == 0)[0][0] + 1)
-
-
-    def integrate_fa(t, params):
-        N = params["N"]
-        result = odeint(f_admin, y0=0, t=t, args=tuple(params.values())).flatten()
-        result[result > N] = N  # turn all x > N to N (fix numerical issue)
-        e = f_energy(result, N, params["rho"], params["phi"], params["psi"], params["c"])
-        st = get_st(t, e)
-        te = trapz(e[:st], t[:st])
-        return st, te, result, e
 
     # create the plot
 
@@ -155,7 +134,7 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
     plt.rcParams.update({'font.size': 14})
     cmap_a = cm.get_cmap("Blues", 4)
     cmap_b = cm.get_cmap("Oranges", 4)
-    cmap_c = cm.get_cmap("Greys", 4)
+    cmap_c = cm.get_cmap("Greys_r", 4)
 
     alpha_sim = .05
     fig, (ax1, ax2, ax3) = plt.subplots(
@@ -231,7 +210,7 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
         for i in np.arange(sim_ecap.shape[1]):
             st_sim[i] = np.sum(sim_ecap[:, i] != 0)
         ax3.hist(st_sim, bins=21, range=[0, plot_time * 1.05], 
-            color=cmap_c(c), alpha=1, label=lab)
+            color=cmap_c(c), alpha=.75, label=lab)
 
     ax1.legend(loc="center", bbox_to_anchor=(.5, .25), ncol=3, frameon=False)
     ax2.legend(loc="center", bbox_to_anchor=(.5, .75), ncol=3, frameon=False)

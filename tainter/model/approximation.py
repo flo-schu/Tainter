@@ -2,7 +2,7 @@ import numpy as np
 from scipy import stats
 from scipy.integrate import odeint, trapz
 
-def f_admin(x, t, N, p_e, epsilon, rho, phi, psi, c, beta, alpha):
+def f_admin(x, t, N, p_e, rho, phi, psi, c, beta, alpha):
     """
     x is the number of administrators
     """
@@ -12,7 +12,7 @@ def f_admin(x, t, N, p_e, epsilon, rho, phi, psi, c, beta, alpha):
         return (
             p_e * (N - 2 * x) +
             stats.beta.cdf(
-                epsilon * N / (
+                N ** psi / (
                     ((N - x) * (1 - rho) ** x) ** psi +
                     c * ((N - x) * (1 - (1 - rho) ** x)) ** phi
                 ),
@@ -23,9 +23,11 @@ def f_admin(x, t, N, p_e, epsilon, rho, phi, psi, c, beta, alpha):
 
 
 def f_energy(x, N, rho, phi, psi, c):
+    # initial access of resources depends on psi in order
+    # to satisfy, that the energy per capita production is 1
     return (
         (((N - x) * (1 - rho) ** x) ** psi + 
-        c * ((N - x) * (1 - (1 - rho) ** x)) ** phi) / N
+        c * ((N - x) * (1 - (1 - rho) ** x)) ** phi) / N ** psi
     )
 
 

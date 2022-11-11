@@ -11,12 +11,9 @@ def tainter(
     first_admin = "random" ,
     choice = "topworker",
     exploration = 0.0,
-    mepercent = 0.75,
-    resource_access = 1.0 ,
     shock_alpha=1,
     shock_beta=15,
     tmax = None,
-    threshold = 1.0 ,
     elast_l = 0.95 ,
     elast_lc = 0.95 ,
     eff_lc = 1.2,
@@ -69,18 +66,9 @@ def tainter(
         a randomly drawn number of a normal distribution centered around k, is
         added.
 
-    death = 0.05
-        sets the percentage of nodes dying each loop
-
-    a = 1.0
-        access to resource (between 0 and 1) 
-
     tmax
         integer optional. If set, the model breaks
         after tmax timesteps
-
-    threshold = 1.0
-        this is the threshold at which a first or further admin is selected
 
     eff = 1.2
        efficiency increase for the effect of an administrator (in basic model:
@@ -98,6 +86,9 @@ def tainter(
     fct = inspect.stack()[0][3] # save function_name which is executed
 
     # Initialize function
+    # calculate the initial per capita resource access of the network
+    # ensures that the per capita energy production equals 1 initially
+    resource_access = N / N ** elast_l
     A, L, Lc, positions, E_cap, tmax, ainit, A_exp, L_exp, Lc_exp, Admin = tm.init(N, resource_access, elast_l, elast_lc, eff_lc, tmax)
     G = tm.construct_network(network, N, k, p)
     history = tm.init_history(A, L, Lc, E_cap, resource_access, A_exp, L_exp, Lc_exp)
@@ -121,7 +112,7 @@ def tainter(
         E_cap = tm.energy_out_capita(access_after_shock, L, Lc, elast_l, elast_lc, eff_lc, N)
 
         # If E_cap below a threshold -> Admin selection mechanism
-        if E_cap < threshold:
+        if E_cap < 1:
 
             Admin = tm.select_Admin(G, A, L, Lc, first_admin, choice)
 
@@ -138,14 +129,14 @@ def tainter(
         Admin = None
 
         if E_cap <= death_energy_level:
-            merun = tm.maximum_energy(history,mepercent)
-            wb = tm.wellbeing(history,threshold)
+            merun = tm.maximum_energy(history, 0.75)
+            wb = tm.wellbeing(history,1)
             tot_energy = tm.total_energy(history)
             break
 
         if t == tmax-1:
-            merun = tm.maximum_energy(history,mepercent)
-            wb = tm.wellbeing(history,threshold)
+            merun = tm.maximum_energy(history, 0.75)
+            wb = tm.wellbeing(history,1)
             tot_energy = tm.total_energy(history)
 
     return history, t, args, fct, tot_energy, wb, G
