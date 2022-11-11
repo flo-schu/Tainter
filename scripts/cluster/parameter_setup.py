@@ -14,34 +14,32 @@
 
 import numpy as np
 import itertools as it
-import math
 
-# params
-rho = np.linspace(0, 0.3, 1000)  # link density in erdos renyi network
-phi = np.linspace(1, 1.5, 100)  # efficiency of coordinated Workers
-pe_null = np.array([0])
-pe_explore = np.logspace(-5, -1.6, num=199)
-p_e = np.concatenate((pe_null, pe_explore), axis=None)
+def generate_parameters(chunk_size=None, **kwargs):
+    parameters = list(kwargs.keys())
+    
+    # parameter grid
+    pargrid = np.array(list(it.product(*kwargs.values())))
+    n_pargrid = len(pargrid)
 
-# chunks
-n_pargrid = len(rho) * len(phi) * len(p_e)
-# choose n_pargrid if only one chunk should be computed,
-# choose 1 if n chunks should be created
-n = 10000
-n_chunks = math.ceil(n_pargrid / n)
+    # choose n_pargrid if only one chunk should be computed,
+    # choose 1 if n chunks should be created
+    if chunk_size is None:
+        chunk_size = n_pargrid
 
-# parameter grid
-pargrid = np.array(list(it.product(p_e, rho, phi)))
-
-# save paramter chunks
-for chunk in range(n_chunks):
-    lower_slice = chunk * n
-    upper_slice = min((chunk + 1) * n, n_pargrid)
-    np.savetxt(
-        "params/chunk_"+str(chunk+1)+".txt",
-        pargrid[lower_slice:upper_slice],
-        delimiter=",", newline="\n"
-    )
-    print(chunk)
+    n_chunks = int(np.ceil(n_pargrid / chunk_size))
 
 
+    # save paramter chunks
+    for chunk in range(n_chunks):
+        lower_slice = chunk * chunk_size
+        upper_slice = min((chunk + 1) * chunk_size, n_pargrid)
+        data_chunk = pargrid[lower_slice:upper_slice]
+        np.savetxt(
+            "params/chunk_"+str(chunk+1)+".txt",
+            data_chunk,
+            delimiter=",", newline="\n"
+        )
+        print(chunk)
+
+    return parameters
