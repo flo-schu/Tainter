@@ -117,8 +117,8 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
         phi = mri_of_coordinated_laborers,  # efficiency of coordinated Workers
         psi = mri_of_laborers,
         c = efficiency_of_coordinated_laborers,
-        beta = shock_alpha,  # scale parameter of beta distribution
-        alpha = shock_beta  # location parameter of beta distribution
+        beta = shock_beta,  # scale parameter of beta distribution
+        alpha = shock_alpha  # location parameter of beta distribution
     )
 
 
@@ -210,7 +210,7 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
         for i in np.arange(sim_ecap.shape[1]):
             st_sim[i] = np.sum(sim_ecap[:, i] != 0)
         ax3.hist(st_sim, bins=21, range=[0, plot_time * 1.05], 
-            color=cmap_c(c), alpha=.75, label=lab)
+            color=cmap_c(c), alpha=1, label=lab)
 
     ax1.legend(loc="center", bbox_to_anchor=(.5, .25), ncol=3, frameon=False)
     ax2.legend(loc="center", bbox_to_anchor=(.5, .75), ncol=3, frameon=False)

@@ -16,8 +16,8 @@ def f_admin(x, t, N, p_e, rho, phi, psi, c, beta, alpha):
                     ((N - x) * (1 - rho) ** x) ** psi +
                     c * ((N - x) * (1 - (1 - rho) ** x)) ** phi
                 ),
-                a=alpha, 
-                b=beta
+                b=beta,
+                a=alpha 
             )
         )
 

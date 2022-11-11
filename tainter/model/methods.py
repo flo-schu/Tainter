@@ -82,7 +82,7 @@ def shock(shock_alpha, shock_beta):
     computes the availability based on the beta distributed shocks
     """
 
-    return np.random.beta(shock_alpha, shock_beta)
+    return np.random.beta(shock_beta, shock_alpha)
 
 def total_energy(history):
     tot_energy = np.sum(history['Energy per capita'])
