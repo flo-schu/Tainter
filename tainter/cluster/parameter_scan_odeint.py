@@ -14,7 +14,9 @@
 import sys
 import os
 import json
+import glob
 import numpy as np
+from tqdm import tqdm
 from tainter.model.approximation import integrate_fa
 
 # environmental variables -----------------------------------------------------
@@ -68,17 +70,19 @@ def parameter_scan(
     t = np.linspace(0, 10000, 10001)
     data = []
 
-    for i in range(len(params)):
-        par = list(params[i])
+    with tqdm(total=len(params)) as pbar:
 
-        # set parameters 
-        for pname, pval in zip(parameters, par):
-            fixed_params[pname] = pval
+        for i in range(len(params)):
+            par = list(params[i])
 
-        st, te, result, e = integrate_fa(t, fixed_params)
-        data.append(np.array(par + [te, st]))
-        print("#", str(i).zfill(5), f"| {parameters}:", np.round(params[i], 3), "-- st:", st,
-            "-- te:", np.round(te,0), "-- min_e:", np.round(np.min(e),2), flush=True)
+            # set parameters 
+            for pname, pval in zip(parameters, par):
+                fixed_params[pname] = pval
+
+            st, te, result, e = integrate_fa(t, fixed_params)
+            data.append(np.array(par + [te, st]))
+
+            pbar.update(1)
 
     data = np.array(data)
     np.savetxt(
@@ -86,6 +90,18 @@ def parameter_scan(
         data,
         delimiter=",", newline="\n"
     )
+
+def process_output(directory):
+    result_files = glob.glob(os.path.join(directory, "result_*.txt"))
+
+    data = []
+
+    for f in result_files:
+        data.append(np.loadtxt(f, delimiter=","))
+
+    return np.concatenate(data)
+    
+
 
 if __name__ == "__main__":
     paramfile = sys.argv[1]
