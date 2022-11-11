@@ -96,8 +96,10 @@ def process_output(directory):
 
     data = []
 
-    for f in result_files:
-        data.append(np.loadtxt(f, delimiter=","))
+    with tqdm(total=len(result_files)) as pbar:
+        for f in result_files:
+            data.append(np.loadtxt(f, delimiter=","))
+            pbar.update(1)
 
     return np.concatenate(data)
     

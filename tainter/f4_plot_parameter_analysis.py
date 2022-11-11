@@ -15,6 +15,7 @@
 #
 # ------------------------------------------------------------------------------
 
+import sys
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import cm
@@ -26,12 +27,12 @@ from tainter.cluster.parameter_scan_odeint import process_output
 # data input and processing for upper subplots ---------------------------------
 
 def fig4_parameter_analysis(
-    data_directory="data/parameter_analysis",
+    data_file="data/parameter_analysis/results_combined.txt",
     parameters=["\rho", "p_e", "c"],
     panel_steps=[0, 1e-4, 5e-4, 5e-3],
     multiline_steps=[],
 ):
-    data = process_output(data_directory)
+    data = np.loadtxt(data_file)
     colnames = np.array(["par_1","par_2", "par_3", "te", "st"])
     print("Import complete")
 
@@ -211,4 +212,5 @@ def fig4_parameter_analysis(
     #     fl2.set_yscale('log')
 
 if __name__ == "__main__":
-    fig4_parameter_analysis()
+    data_file = sys.argv[1]
+    fig4_parameter_analysis(data_file=data_file)
