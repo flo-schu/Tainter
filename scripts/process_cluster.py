@@ -10,8 +10,5 @@ data = process_output(directory=output)
 data_file = os.path.join(output, "results_combined_cluster.txt")
 np.savetxt(data_file, data)
 
+print("file saved")
 
-fig4_parameter_analysis(
-    data_file=data_file,
-    multiline_steps=[]
-)
