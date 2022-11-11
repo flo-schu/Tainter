@@ -15,9 +15,13 @@ import os
 import json
 import itertools as it
 import numpy as np
+from tqdm import tqdm
 
 def generate_parameters(output, approx_parameters, chunk_size=None, **kwargs):
     parameters = list(kwargs.keys())
+
+    os.makedirs(output, exist_ok=True)
+
     with open(os.path.join(output, "approx_params.json"), "w") as f:
         json.dump(approx_parameters, f)
 
@@ -34,16 +38,18 @@ def generate_parameters(output, approx_parameters, chunk_size=None, **kwargs):
     n_chunks = int(np.ceil(n_pargrid / chunk_size))
 
 
-    # save paramter chunks
-    for chunk in range(n_chunks):
-        lower_slice = chunk * chunk_size
-        upper_slice = min((chunk + 1) * chunk_size, n_pargrid)
-        data_chunk = pargrid[lower_slice:upper_slice]
-        np.savetxt(
-            os.path.join(output, f"params_{str(chunk+1).zfill(4)}.txt"),
-            data_chunk,
-            delimiter=",", newline="\n"
-        )
-        print(chunk)
+    print("creating parameter chunks")
+    with tqdm(total=n_chunks) as pbar:
+        # save paramter chunks
+        for chunk in range(n_chunks):
+            lower_slice = chunk * chunk_size
+            upper_slice = min((chunk + 1) * chunk_size, n_pargrid)
+            data_chunk = pargrid[lower_slice:upper_slice]
+            np.savetxt(
+                os.path.join(output, f"params_{str(chunk+1).zfill(4)}.txt"),
+                data_chunk,
+                delimiter=",", newline="\n"
+            )
+            pbar.update(1)
 
     return parameters, n_chunks

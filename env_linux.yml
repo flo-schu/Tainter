@@ -1,0 +1,17 @@
+name: tainter
+channels:
+  - conda-forge
+  - bioconda
+  - fastchan
+  - defaults
+dependencies:
+  - python=3.9
+  - pandas
+  - tqdm
+  - matplotlib
+  - networkx
+  - numpy
+  - matplotlib-label-lines
+  - scipy
+prefix: /home/schunckf/.conda/envs/tainter
+
