@@ -93,7 +93,12 @@ def parameter_scan(
 
 def process_output(directory):
     result_files = glob.glob(os.path.join(directory, "result_*.txt"))
-
+    
+    # sorting the files accoding to integer based id
+    result_id = [int(os.path.basename(i).split("_")[1].split(".")[0]) 
+        for i in result_files]
+    result_files = [f for _, f in sorted(zip(result_id, result_files))]
+    
     data = []
 
     with tqdm(total=len(result_files)) as pbar:

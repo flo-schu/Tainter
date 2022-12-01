@@ -113,13 +113,12 @@ def fig4_parameter_analysis(
         contour_phi = np.flipud(darr[pe, :, :, np.where(colnames == "par_3")[0][0]].T)
         contour_stlim = np.flipud(darr[pe, :, :, np.where(colnames == "st")[0][0]].T)
         im = ax.imshow(grid, extent=(min(npar_2), max(npar_2), min(npar_3), max(npar_3)),
-                    vmin=0, vmax=c_st.max() - 1, cmap=cmap,
+                    vmin=0, vmax=9999, cmap=cmap,
                     aspect="auto")
         ax.contour(contour_rho, contour_phi, contour_stlim,
                 levels=np.array([9999]), linestyles="-", colors="black")
         if lab != "$B_1$": ax.yaxis.set_ticklabels([])
         if lab == "$B_1$": ax.set_ylabel(f"efficiency ($c$)")
-        if lab == "$B_2$": ax.text(x=.325, y=.94, s="link density ($\\rho$)", ha="center")
         if lab == "$B_4$":
             axins = inset_axes(ax,
                             width="8%",  # width = 50% of parent_bbox width
@@ -181,7 +180,9 @@ def fig4_parameter_analysis(
                                 linestyle="--", alpha=.5)
             fm1.add_artist(cp)
 
-    plt.subplots_adjust(0.12, 0.09, 0.98, 0.98, 0.13, 0.31)
+    fig.text(x=.55, y=.035, s="link density ($\\rho$)", ha="center")
+
+    plt.subplots_adjust(0.12, 0.12, 0.98, 0.98, 0.13, 0.31)
 
     return fig
     # fl1 = fig.add_subplot(gs[2, 0:3])
