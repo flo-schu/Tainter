@@ -128,7 +128,6 @@ def fig4_parameter_analysis(
             fu3cb.set_label('survival time')
             fu3cb.set_ticks([0, 5000, 10000])
             fu3cb.set_ticklabels(['0', '5000', '$\\geq 10000$'])
-
         # plot annotations
         # pe_lab = r'$par_1=%.5f$' % (npar_1[pe],)
         pe_lab = ""

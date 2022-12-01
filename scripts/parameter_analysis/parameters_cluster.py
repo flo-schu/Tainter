@@ -3,7 +3,7 @@ import sys
 from tainter.cluster.parameter_setup import generate_parameters
 
 # select parameter ranges
-rho = np.linspace(0, 0.15, 100)  # link density in erdos renyi network
+rho = np.linspace(0, 0.1, 100)  # link density in erdos renyi network
 c = np.linspace(1, 3, 200)  # efficiency of coordinated Workers
 pe_null = np.array([0])
 pe_explore = np.logspace(-5, -1.6, num=499)
