@@ -6,7 +6,7 @@ import pandas as pd
 from matplotlib import cm
 from tainter.model.simulation import tainter
 import tainter.model.methods as tm
-
+from scipy.optimize import minimize, basinhopping
 # choose which runs to plot ----------------------------------------------------
 # directories where simulation results are stored which are to be compared
 
@@ -16,11 +16,11 @@ def fig2_stochastic_simulations(
     plot_time=5000,
     network_size=400, 
     link_probability_between_nodes=0.02,
-    mri_of_laborers=0.8,
-    mri_of_coordinated_laborers=0.8,
-    efficiency_of_coordinated_laborers=1.2,
-    shock_alpha=1,
-    shock_beta=15,
+    mri_of_laborers=0.75,
+    mri_of_coordinated_laborers=0.75,
+    efficiency_of_coordinated_laborers=1.05,
+    shock_alpha=15,
+    shock_beta=1,
     **simulation_kwargs
 ):
     np.random.seed(seed)
@@ -127,27 +127,54 @@ def fig2_stochastic_simulations(
 
     # ------------------------------------------------------------------------------
     # plot stylized diminishing marginal returns
-    # compute theoretical diminishing returns
-    def output(complexity, eff, loss):
-        return complexity * eff - (complexity) ** loss + 0.93
-
-    def marginal(arr):
-        return np.diff(arr)
-
-    complexity = np.linspace(0,10, num =100)
-    returns = output(complexity, 1.1, 1.11)
 
     # compute moving average of empirical ecap
-    ecap = np.convolve(np.array(results[0]['Ecap']), np.ones(5), 'valid') / 5
-    x = np.array(results[0]['Admin'])
+    window = 11
+    ecap = np.convolve(np.array(results[0]['Ecap']), np.ones(window), 'valid') / window
+    # trim because of convolution
+    cutoff = int(np.floor(window/2))
+    admin = np.array(results[0]['Admin'])[cutoff:len(results[0])-cutoff]  
 
-    ax1b.plot(x[2:len(x)-2], ecap, 'o', lw=1,
-            color=cmap_e(2), label="$E_{prodcution}$")
-    ax1b.plot(complexity/10, returns, color="black", lw=1.5)
+    # only select the initial phase:
+    idx_init = np.where(ecap-1 > -0.1)[0]
+    ecap_init = ecap[idx_init]
+    admin_init = admin[idx_init]
 
-    ax1b.set_ylim(0.85,1.1)
-    ax1b.set_xlim(0,0.3)
+    # plot observed data
+    ax1b.plot(admin_init, ecap_init, 'o', lw=1,
+            color=cmap_e(2), label="$E_{prodcution}$", alpha=.5)
+    ax1b.set_ylim(ecap_init.min(), ecap_init.max())
+    ax1b.set_xlim(admin_init.min(), admin_init.max())
+
+    # theoretical complexity (ranges between 0 and 1 like administrator share)
+    complexity = np.linspace(0,admin_init.max(), num=len(idx_init))
+
+    # compute theoretical diminishing returns
+    def returns_on_complexity(complexity, shift, gains, losses, offset):
+        return (
+            gains * (complexity + shift) * 1 +    # gains through complexity inc.
+            losses * (complexity + shift) ** 2 +  # losses through compelxity inc.
+            offset
+        )
+
+
+    def loss(X):
+        shift, gains, losses, offset = X
+        roc = returns_on_complexity(complexity, shift, gains, losses, offset)
+
+        return np.sum((roc - ecap_init) ** 2)
+        
+
+    res = basinhopping(loss, (0.1, 1.1,0.1,1))
+    
+    roc = returns_on_complexity(complexity, *res.x)
+    roc = returns_on_complexity(complexity, 0.1, 3.6, -11.5, 0.8)
+    ax1b.plot(complexity, roc, color="black", lw=1.5)
+
 
     return fig
     # save -------------------------------------------------------------------------
 
+if __name__ == "__main__":
+    exploration_scenarios = [0, 0.00275,  0.02]  # must always be a list of 3
+    fig = fig2_stochastic_simulations(exploration_setups=exploration_scenarios)
