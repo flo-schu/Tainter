@@ -15,7 +15,7 @@ __pycache__
 *.pickle
 /venv/
 /venv39/
-/data/
+data
 /plots/
 *.pkl
 *.pyc

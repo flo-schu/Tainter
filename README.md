@@ -6,6 +6,16 @@ collapse of complex societies.
 Tainter, J. A. (1988).The collapse of complex societies.  
 New studies in archaeology. Cambridge: CambridgeUniversity Press
 
+## installation
+
+create environment, activate it and install model package
+
+```bash
+conda env create -f env_linux.yml
+conda activate tainter
+pip install -e .
+```
+
 ## Model
 
 The model is an agent-based network model written in Python. The main files

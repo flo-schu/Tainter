@@ -13,5 +13,4 @@ dependencies:
   - numpy
   - matplotlib-label-lines
   - scipy
-prefix: /home/schunckf/.conda/envs/tainter
-
+  - ipykernel
