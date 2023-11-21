@@ -13,7 +13,7 @@ create environment, activate it and install model package
 ```bash
 conda create -n tainter
 conda activate tainter
-pip install python==3.9
+conda install python=3.9
 pip install -e .
 ```
 
