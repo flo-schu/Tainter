@@ -20,6 +20,16 @@ classifiers = [
     "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
+dependencies = [
+  "pandas == 2.1.1",
+  "tqdm == 4.66.1",
+  "matplotlib == 3.8.0",
+  "networkx == 3.1",
+  "numpy == 1.26.0",
+  "matplotlib-label-lines == 0.7.0",
+  "scipy == 1.11.3",
+  "ipykernel == 6.25.2"
+]
 
 [project.urls]
 "Homepage" = "https://github.com/flo-schu/tainter"
@@ -27,8 +37,4 @@ classifiers = [
 
 
 [tool.setuptools.packages.find]
-# All the following settings are optional:
-where = ["."]  # ["."] by default
-include = ["tainter", "scripts"]  # ["."] by default
-exclude = []  # empty by default
-namespaces = true  # true by default
+include = ["tainter*", "scripts*"]  # ["."] by default
