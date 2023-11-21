@@ -11,7 +11,7 @@ New studies in archaeology. Cambridge: CambridgeUniversity Press
 create environment, activate it and install model package
 
 ```bash
-conda create -f tainter
+conda create -n tainter
 conda activate tainter
 pip install python==3.9
 pip install -e .
