@@ -21,3 +21,4 @@ data
 *.pyc
 *.egg-info
 *.code-workspace
+work
