@@ -166,8 +166,8 @@ def fig4_parameter_analysis(
         fm1.plot(pe, st, color="black", linewidth=.75, label=lbl)
 
     # x_locations = np.asarray(plt.ginput(len(levels), timeout=-1))[:,0]
-    x_locations = np.array([1.517e-05, 2.474e-05, 5.069e-05, 8.418e-05, 1.611e-04,
-                            2.278e-04, 2.760e-04, 3.5e-04])
+    x_locations = np.array([1.5e-05, 2.5e-05, 5.0e-05, 7.0e-05, 1.1e-04,
+                            1.5e-04, 2.0e-04, 2.75e-04, 3.5e-4])
     labelLines(fm1.get_lines(), xvals=x_locations, zorder=2.5, fontsize=10,
             bbox={'pad': .5, 'color': 'white'})
 
