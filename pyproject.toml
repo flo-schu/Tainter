@@ -28,7 +28,8 @@ dependencies = [
   "numpy == 1.26.0",
   "matplotlib-label-lines == 0.7.0",
   "scipy == 1.11.3",
-  "ipykernel == 6.25.2"
+  "ipykernel == 6.25.2",
+  "jupyterlab"
 ]
 
 [project.optional-dependencies]
