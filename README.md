@@ -8,14 +8,34 @@ New studies in archaeology. Cambridge: CambridgeUniversity Press
 
 ## installation
 
-create environment, activate it and install model package
+Obtain the code and change into directory
+
+```bash
+git clone git@github.com:flo-schu/tainter
+cd tainter
+```
+
+Create environment, activate it and install model package.
+the [datalad] option installs the datalad packages which are necessary to 
+download the dataset.
 
 ```bash
 conda create -n tainter
 conda activate tainter
 conda install python=3.9
-pip install -e .
+pip install -e .[datalad] 
 ```
+
+Install the pre-simulated dataset from the open-science foundation (osf.io) 
+into the folder_publication data
+
+```bash
+datalad clone https://osf.io/thx25/ publication_data
+```
+
+You should be done. All anylses from the paper can be conducted by executing
+the jupyter notebook `scripts/analysis.ipynb`
+
 
 ## Model
 
