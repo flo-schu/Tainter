@@ -36,6 +36,10 @@ datalad clone https://osf.io/thx25/ publication_data
 You should be done. All anylses from the paper can be conducted by executing
 the jupyter notebook `scripts/analysis.ipynb`
 
+```bash
+jupyter lab scripts/analysis.ipynb
+```
+
 
 ## Model
 
