@@ -22,3 +22,4 @@ data
 *.egg-info
 *.code-workspace
 work
+results
