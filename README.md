@@ -30,7 +30,7 @@ Install the pre-simulated dataset from the open-science foundation (osf.io)
 into the folder_publication data
 
 ```bash
-datalad clone https://osf.io/thx25/ publication_data
+datalad clone https://osf.io/u897c/ publication_data
 ```
 
 You should be done. All anylses from the paper can be conducted by executing
