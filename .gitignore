@@ -2,7 +2,6 @@
 *.thm
 *.synctex.gz
 __pycache__
-/.vscode/
 *.out
 *.log
 *.fls
@@ -13,13 +12,15 @@ __pycache__
 *.csv
 *.txt
 *.pickle
-/venv/
-/venv39/
-data
-/plots/
 *.pkl
 *.pyc
 *.egg-info
 *.code-workspace
+
+/.vscode/
+plots
+data
 work
 results
+publication_data
+.ipynb_checkpoints
