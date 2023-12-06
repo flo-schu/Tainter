@@ -16,15 +16,15 @@ import networkx as nx
 # nx = importlib.util.module_from_spec(spec)
 # spec.loader.exec_module(nx)
 
-def init_history(A, L, Lc, E_cap, a, A_exp, L_exp, Lc_exp):
+def init_history(A, L, C, E_cap, a, A_exp, L_exp, Lc_exp):
     """initialize dictionary which records the history of the network"""
     history = {
         'Administration':[len(A)],
         'Administrators':[[A.copy()]],
         'Labourers':[len(L)],
         'Workers':[[L.copy()]],
-        'coordinated Labourers':[len(Lc)],
-        'cWorkers':[[Lc.copy()]],
+        'coordinated Labourers':[len(C)],
+        'cWorkers':[[C.copy()]],
         'Energy per capita':[E_cap],
         'access':[a],
         'Aexpl':[A_exp],
@@ -34,7 +34,7 @@ def init_history(A, L, Lc, E_cap, a, A_exp, L_exp, Lc_exp):
     }
     return history
 
-def update_history(history, A, L, Lc, E_cap, a, A_exp, L_exp, Lc_exp,Admin):
+def update_history(history, A, L, C, E_cap, a, A_exp, L_exp, Lc_exp,Admin):
     """
     Append results to a dictionary.
     """
@@ -42,8 +42,8 @@ def update_history(history, A, L, Lc, E_cap, a, A_exp, L_exp, Lc_exp,Admin):
     history['Administrators'].append([A.copy()])
     history['Labourers'].append(len(L))
     history['Workers'].append([L.copy()])
-    history['coordinated Labourers'].append(len(Lc))
-    history['cWorkers'].append([Lc.copy()])
+    history['coordinated Labourers'].append(len(C))
+    history['cWorkers'].append([C.copy()])
     history['Energy per capita'].append(E_cap)
     history['access'].append(a)
     history['Aexpl'].append(A_exp)
@@ -53,7 +53,7 @@ def update_history(history, A, L, Lc, E_cap, a, A_exp, L_exp, Lc_exp,Admin):
     return history
 
 
-def node_origin(A,L,Lc,A2,L2,Lc2):
+def node_origin(A,L,C,A2,L2,Lc2):
     A_add = [i for i in A.difference(A2)]
     A_rem = [i for i in A2.difference(A)]
     A_exp = [A_add,A_rem]
@@ -62,19 +62,19 @@ def node_origin(A,L,Lc,A2,L2,Lc2):
     L_rem = [i for i in L2.difference(L)]
     L_exp = [L_add,L_rem]
 
-    Lc_add = [i for i in Lc.difference(Lc2)]
-    Lc_rem = [i for i in Lc2.difference(Lc)]
+    Lc_add = [i for i in C.difference(Lc2)]
+    Lc_rem = [i for i in Lc2.difference(C)]
     Lc_exp = [Lc_add,Lc_rem]
 
     return A_exp, L_exp, Lc_exp
 
 
-def energy_out_capita(a, L, Lc, elast_l, elast_lc, eff_lc, N):
+def energy_out_capita(a, L, C, elasticity_l, elasticity_c, productivity_c, N):
     """
     compute the energy output averaged per capita after efficiency increase
     by the administration.
     """
-    E_cap = a * (len(L)**elast_l + eff_lc * len(Lc)**elast_lc) / N
+    E_cap = a * (len(L)**elasticity_l + productivity_c * len(C)**elasticity_c) / N
     return E_cap
 
 def shock(shock_alpha, shock_beta):
@@ -134,7 +134,7 @@ def construct_network(network, N, k=None, p=None):
         print("no valid network. Please specify as networkx network or choose from 'watts', 'barabasi', 'erdos'")
     return G
 
-def init(N, a, elast_l, elast_lc, eff_lc, tmax):
+def init(N, a, elasticity_l, elasticity_c, productivity_c, tmax):
     """
     creates sets for the classes of the network
     network is initialized with all nodes as L
@@ -144,7 +144,7 @@ def init(N, a, elast_l, elast_lc, eff_lc, tmax):
     # set definitions admin, worker, coordinated workers at this point all start at 0
     A  = set([])  # initially only individual 0 is administrator set([]) erstellt eine menge von einer Liste
     L  = set(range(0, N))  # all others are labourers
-    Lc = set([])
+    C = set([])
 
     A_exp = [[],[]]
     L_exp = [[],[]]
@@ -155,22 +155,22 @@ def init(N, a, elast_l, elast_lc, eff_lc, tmax):
     positions = list(zip(np.random.choice(N, size = N, replace = False),np.random.choice(N, size = N, replace = False)))
     
     # calculate initial
-    E_cap = energy_out_capita(a, L, Lc, elast_l, elast_lc, eff_lc, N)
+    E_cap = energy_out_capita(a, L, C, elasticity_l, elasticity_c, productivity_c, N)
     ainit = a
 
-    return A, L, Lc, positions, E_cap, tmax, ainit, A_exp, L_exp, Lc_exp, Admin
+    return A, L, C, positions, E_cap, tmax, ainit, A_exp, L_exp, Lc_exp, Admin
 
-def select_Admin(G, A, L, Lc, first_admin, choice):
+def select_Admin(G, A, L, C, first_admin, choice):
     """
     function to select first and following Admins, based on certain rules
-    A, L, Lc need to be sets of nodes of the networkx object G
+    A, L, C need to be sets of nodes of the networkx object G
     the parameters 'first_admin' and 'choice' specify by which method
     admins are selectedself.
 
     first_admin:    "random", "highest degree"
     choice:         "topworker": labourer of highest degree
-                    "topcoordinated": Lc of highest degree
-                    "toptop": L or Lc of highest degree
+                    "topcoordinated": C of highest degree
+                    "toptop": L or C of highest degree
 
     """
     if len(A) == 0:
@@ -183,7 +183,7 @@ def select_Admin(G, A, L, Lc, first_admin, choice):
     else:
         if choice == "random":
             try:
-                Admin = np.random.choice(list(L.union(Lc)))
+                Admin = np.random.choice(list(L.union(C)))
             except ValueError:
                 return None
         if choice == "topworker":
@@ -196,15 +196,15 @@ def select_Admin(G, A, L, Lc, first_admin, choice):
         elif choice == "topcoordinated":
             # selects the corrdinated worker with the highest degree
             try:
-                Admin = list(G.degree(Lc))[np.argmax(np.array(list(G.degree(Lc)))[:,1])][0]
+                Admin = list(G.degree(C))[np.argmax(np.array(list(G.degree(C)))[:,1])][0]
             except IndexError:
                 return None
         elif choice == "toptop":
             # selects the worker with the most connections irrespective of to whom
             try:
-                Admin = list(G.degree(Lc.union(L)))[np.argmax(np.array(list(G.degree(Lc.union(L))))[:,1])][0]
+                Admin = list(G.degree(C.union(L)))[np.argmax(np.array(list(G.degree(C.union(L))))[:,1])][0]
             except IndexError:
-                print("Labourers: ", L, "     coordinatedLabourers:  ", Lc)
+                print("Labourers: ", L, "     coordinatedLabourers:  ", C)
                 return None
     return Admin
 
@@ -215,16 +215,16 @@ def sample_network():
     N =100
     A = set(list(np.random.choice(range(100), size = 5)))
     L = set(range(100)).difference(A)
-    Lc = set()
+    C = set()
     G = nx.watts_strogatz_graph(n=100,k=5,p=0.05)
-    L, Lc = refresh_network(A,L,Lc,G)
-    return G, A, L, Lc, N
+    L, C = refresh_network(A,L,C,G)
+    return G, A, L, C, N
 
-def exploration(G, A, L, Lc, N, exploration ):
+def exploration(G, A, L, C, N, exploration ):
     """
     Network exploration adds the function to the tainter model, to let nodes explore
     other 'occupations', with the parameter exploration [0,1], the probability to flip
-    the node is set. Nodes can either change from L or Lc to A or from A to L. Lcs are
+    the node is set. Nodes can either change from L or C to A or from A to L. Lcs are
     afterwards recalculated.
     """
     for i in range(N):
@@ -232,22 +232,22 @@ def exploration(G, A, L, Lc, N, exploration ):
             if i in A:
                 A.remove(i)
                 L.add(i)
-            elif i in Lc:
-                Lc.remove(i)
+            elif i in C:
+                C.remove(i)
                 A.add(i)
             elif i in L:
                 L.remove(i)
                 A.add(i)
 
-    L, Lc = refresh_network(A, L, Lc, G)
+    L, C = refresh_network(A, L, C, G)
 
-    if sum([len(A),len(L),len(Lc)]) != N:
-        print("A:",len(A),"L:", len(L),"Lc:", len(Lc), "sum:", sum([len(A),len(L),len(Lc)]))
+    if sum([len(A),len(L),len(C)]) != N:
+        print("A:",len(A),"L:", len(L),"C:", len(C), "sum:", sum([len(A),len(L),len(C)]))
         print("Exploration does not work changed number of nodes!")
 
-    return A, L, Lc
+    return A, L, C
 
-def refresh_network(A, L, Lc, G):
+def refresh_network(A, L, C, G):
     """
     function which recalculates all nodes based on the set of admins. Necessary,
     if the network removes admins from the set.
@@ -258,12 +258,12 @@ def refresh_network(A, L, Lc, G):
         Lcn = Lcn.union(set(G.neighbors(i)).difference(A))
 
     # if some Lcs are not coordinated any longer, find them and assign them to L
-    L = L.union(Lc.difference(Lcn))
+    L = L.union(C.difference(Lcn))
     
     # remove all Lcs from L
     L = L.difference(Lcn)
-    Lc = Lcn
-    return L, Lc
+    C = Lcn
+    return L, C
 
 def update_links(Admin, A, G):
     """create a tuple of link pairs between old Admins and new Admins"""
@@ -272,7 +272,7 @@ def update_links(Admin, A, G):
     # method add_edges_from updates the variable G as nonlocal
     G.add_edges_from(newlinks)
 
-def update_network(A, L, Lc, Admin, G):
+def update_network(A, L, C, Admin, G):
     """
     update network is an essential function, which is necessary for the operation
     of adding new Admins to the set of existing Admins (A). It does not involve
@@ -282,34 +282,34 @@ def update_network(A, L, Lc, Admin, G):
     try:
         L.remove(Admin)
     except KeyError:
-        Lc.remove(Admin)
-    Lc = Lc.union(set(G.neighbors(Admin)).difference(A))
-    L = L.difference(Lc)
-    return L, Lc, A
+        C.remove(Admin)
+    C = C.union(set(G.neighbors(Admin)).difference(A))
+    L = L.difference(C)
+    return L, C, A
 
-def crosslinks(G, A, L, Lc):
+def crosslinks(G, A, L, C):
     """
     crosslinks calculate the amount of links between Administration and Labour
-    (L + Lc)
+    (L + C)
     """
     GA = G.subgraph(A)
-    GnonA = G.subgraph(L.union(Lc))
+    GnonA = G.subgraph(L.union(C))
     crosslinks = len(G.edges) - len(GA.edges) - len(GnonA.edges)
     return crosslinks
 
-def print_graph(t, A, Lc, L, G, positions, N, layout = "spring", print_every=1):
+def print_graph(t, A, C, L, G, positions, N, layout = "spring", print_every=1):
     """prints graph every n runs. Layout can be chosen from 'spring' and 
     'fixed' 
     """
     if print_every != None and t%print_every == 0:
         print(
-            "#", t, "Number of nodes:",len(A) + len(Lc) + len(L),
+            "#", t, "Number of nodes:",len(A) + len(C) + len(L),
             "mean degree:",np.mean(list(dict(G.degree).values()))
             )
         if layout == "spring":
-            nx.draw(G, pos = None, node_color=[0 if i in L else 0.5 if i in Lc else 1 for i in range(N)])
+            nx.draw(G, pos = None, node_color=[0 if i in L else 0.5 if i in C else 1 for i in range(N)])
         elif layout == "fixed":
-            nx.draw(G, pos = positions, node_color=[0 if i in L else 0.5 if i in Lc else 1 for i in range(N)])
+            nx.draw(G, pos = positions, node_color=[0 if i in L else 0.5 if i in C else 1 for i in range(N)])
         plt.show()
 
 def save_data(

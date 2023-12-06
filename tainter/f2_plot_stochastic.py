@@ -15,10 +15,10 @@ def fig2_stochastic_simulations(
     exploration_setups=[],
     plot_time=5000,
     network_size=400, 
-    link_probability_between_nodes=0.02,
-    mri_of_laborers=0.75,
-    mri_of_coordinated_laborers=0.75,
-    efficiency_of_coordinated_laborers=1.05,
+    rho=0.02,
+    elasticity_l=0.75,
+    elasticity_c=0.75,
+    productivity_c=1.05,
     shock_alpha=15,
     shock_beta=1,
     **simulation_kwargs
@@ -34,7 +34,7 @@ def fig2_stochastic_simulations(
             network = "erdos" , 
             N = network_size,
             k = 0,
-            p = link_probability_between_nodes,
+            p = rho,
             layout = "fixed",
             first_admin = "highest degree" ,
             choice = "topcoordinated",
@@ -44,9 +44,9 @@ def fig2_stochastic_simulations(
             tmax = 10000,
             death_energy_level = 0.0,
             print_every = None,
-            elast_l=mri_of_laborers,
-            elast_lc=mri_of_coordinated_laborers,
-            eff_lc=efficiency_of_coordinated_laborers,
+            elasticity_l=elasticity_l,
+            elasticity_c=elasticity_c,
+            productivity_c=productivity_c,
             **simulation_kwargs
         )
 

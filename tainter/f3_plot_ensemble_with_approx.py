@@ -22,10 +22,10 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
     iterations=2,
     plot_time=5000,
     network_size=400, 
-    link_probability_between_nodes=0.02,
-    mri_of_laborers=0.8,
-    mri_of_coordinated_laborers=0.8,
-    efficiency_of_coordinated_laborers=1.2,
+    rho=0.02,
+    elasticity_l=0.8,
+    elasticity_c=0.8,
+    productivity_c=1.2,
     shock_alpha=1,
     shock_beta=15,
     **simulation_kwargs
@@ -69,7 +69,7 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
                         network = "erdos" , 
                         N = network_size,
                         k = 0,
-                        p = link_probability_between_nodes,
+                        p = rho,
                         layout = "fixed",
                         first_admin = "highest degree" ,
                         choice = "topcoordinated",
@@ -79,9 +79,9 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
                         tmax = 10000,
                         death_energy_level = 0.0,
                         print_every = None,
-                        elast_l=mri_of_laborers,
-                        elast_lc=mri_of_coordinated_laborers,
-                        eff_lc=efficiency_of_coordinated_laborers,
+                        elasticity_l=elasticity_l,
+                        elasticity_c=elasticity_c,
+                        productivity_c=productivity_c,
                         **simulation_kwargs
                     )
 
@@ -113,10 +113,10 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
     fixed_params = dict(
         N = network_size,  # Network size
         p_e = 0.0,  # default value
-        rho = link_probability_between_nodes,  # link density in erdos renyi network
-        phi = mri_of_coordinated_laborers,  # efficiency of coordinated Workers
-        psi = mri_of_laborers,
-        c = efficiency_of_coordinated_laborers,
+        rho = rho,  # link density in erdos renyi network
+        phi = elasticity_c,  # efficiency of coordinated Workers
+        psi = elasticity_l,
+        c = productivity_c,
         beta = shock_beta,  # scale parameter of beta distribution
         alpha = shock_alpha  # location parameter of beta distribution
     )

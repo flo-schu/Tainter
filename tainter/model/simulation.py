@@ -14,9 +14,9 @@ def tainter(
     shock_alpha=1,
     shock_beta=15,
     tmax = None,
-    elast_l = 0.95 ,
-    elast_lc = 0.95 ,
-    eff_lc = 1.2,
+    elasticity_l = 0.95 ,
+    elasticity_c = 0.95 ,
+    productivity_c = 1.2,
     death_energy_level = 0,
     print_every = None
 ):
@@ -88,18 +88,18 @@ def tainter(
     # Initialize function
     # calculate the initial per capita resource access of the network
     # ensures that the per capita energy production equals 1 initially
-    resource_access = N / N ** elast_l
-    A, L, Lc, positions, E_cap, tmax, ainit, A_exp, L_exp, Lc_exp, Admin = tm.init(N, resource_access, elast_l, elast_lc, eff_lc, tmax)
+    resource_access = N / N ** elasticity_l
+    A, L, C, positions, E_cap, tmax, ainit, A_exp, L_exp, Lc_exp, Admin = tm.init(N, resource_access, elasticity_l, elasticity_c, productivity_c, tmax)
     G = tm.construct_network(network, N, k, p)
-    history = tm.init_history(A, L, Lc, E_cap, resource_access, A_exp, L_exp, Lc_exp)
+    history = tm.init_history(A, L, C, E_cap, resource_access, A_exp, L_exp, Lc_exp)
 
     for t in range(tmax):
         A_2 = A.copy()
         L_2 = L.copy()
-        Lc_2 = Lc.copy()
+        Lc_2 = C.copy()
 
-        A, L, Lc = tm.exploration(G, A, L, Lc, N, exploration )
-        A_exp, L_exp, Lc_exp = tm.node_origin(A,L,Lc,A_2,L_2,Lc_2)
+        A, L, C = tm.exploration(G, A, L, C, N, exploration )
+        A_exp, L_exp, Lc_exp = tm.node_origin(A,L,C,A_2,L_2,Lc_2)
 
         # Environmental Shocks
         shock = tm.shock(shock_alpha, shock_beta)
@@ -109,23 +109,23 @@ def tainter(
         access_after_shock = resource_access * (1 - shock)
 
         # Calculate the Energy per Capita
-        E_cap = tm.energy_out_capita(access_after_shock, L, Lc, elast_l, elast_lc, eff_lc, N)
+        E_cap = tm.energy_out_capita(access_after_shock, L, C, elasticity_l, elasticity_c, productivity_c, N)
 
         # If E_cap below a threshold -> Admin selection mechanism
         if E_cap < 1:
 
-            Admin = tm.select_Admin(G, A, L, Lc, first_admin, choice)
+            Admin = tm.select_Admin(G, A, L, C, first_admin, choice)
 
             # if no Admin is selected, there is no need to update the network
             if Admin != None:
-                L, Lc, A = tm.update_network(A, L, Lc, Admin, G)
+                L, C, A = tm.update_network(A, L, C, Admin, G)
 
-        E_cap = tm.energy_out_capita(access_after_shock, L, Lc, elast_l, elast_lc, eff_lc, N)
+        E_cap = tm.energy_out_capita(access_after_shock, L, C, elasticity_l, elasticity_c, productivity_c, N)
 
         if print_every != None:
-            tm.print_graph(t, A, Lc, L, G, positions, N, layout=layout, print_every=print_every)
+            tm.print_graph(t, A, C, L, G, positions, N, layout=layout, print_every=print_every)
 
-        tm.update_history(history, A, L, Lc, E_cap, access_after_shock, A_exp,L_exp, Lc_exp,Admin)
+        tm.update_history(history, A, L, C, E_cap, access_after_shock, A_exp,L_exp, Lc_exp,Admin)
         Admin = None
 
         if E_cap <= death_energy_level:

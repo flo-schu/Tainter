@@ -7,10 +7,10 @@ from tainter.model.approximation import integrate_fa
 def fig3b_administrator_trajectories(
     exploration_setups,
     network_size=400, 
-    link_probability_between_nodes=0.02,
-    mri_of_laborers=0.8,
-    mri_of_coordinated_laborers=0.8,
-    efficiency_of_coordinated_laborers=1.2,
+    rho=0.02,
+    elasticity_l=0.8,
+    elasticity_c=0.8,
+    productivity_c=1.2,
     shock_alpha=1,
     shock_beta=15,
 
@@ -19,10 +19,10 @@ def fig3b_administrator_trajectories(
     fixed_params = dict(
         N = network_size,  # Network size
         p_e = 0.0,  # default value
-        rho = link_probability_between_nodes,  # link density in erdos renyi network
-        phi = mri_of_coordinated_laborers,  # efficiency of coordinated Workers
-        psi = mri_of_laborers,
-        c = efficiency_of_coordinated_laborers,
+        rho = rho,  # link density in erdos renyi network
+        phi = elasticity_c,  # efficiency of coordinated Workers
+        psi = elasticity_l,
+        c = productivity_c,
         beta = shock_beta,  # scale parameter of beta distribution
         alpha = shock_alpha  # location parameter of beta distribution
     )
