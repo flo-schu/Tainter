@@ -134,7 +134,7 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
     plt.rcParams.update({'font.size': 14})
     cmap_a = cm.get_cmap("Blues", 4)
     cmap_b = cm.get_cmap("Oranges", 4)
-    cmap_c = cm.get_cmap("Greys_r", 4)
+    cmap_c = cm.get_cmap("Greys", 4)
 
     alpha_sim = .05
     fig, (ax1, ax2, ax3) = plt.subplots(
@@ -174,8 +174,10 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
     ax1.set_position(bbox)
 
     ddir = os.listdir(ensemble_data)
+    ddir = [f for f in ddir if ".csv" in f]
+    surv_time = []
     for exploration_rate, c, lab, line in zip(exploration_setups, colors, labels, lines):
-        datafiles  = [j for j in ddir if str(exploration_rate) in j]
+        datafiles  = [j for j in ddir if j.split("_")[1] == str(exploration_rate)]
 
         def extract_val(flist, timesteps, index):
             out = np.ndarray(shape = (timesteps,len(flist)))
@@ -209,13 +211,22 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
         # count timepoints where energy was produced for each of the 100 model runs
         for i in np.arange(sim_ecap.shape[1]):
             st_sim[i] = np.sum(sim_ecap[:, i] != 0)
-        ax3.hist(st_sim, bins=21, range=[0, plot_time * 1.05], 
-            color=cmap_c(c), alpha=1, label=lab)
+
+        surv_time.append(st_sim)
+
+    ax3_explo_order = [2, 0, 1]
+    for explo_i in ax3_explo_order:
+        ax3.hist(surv_time[explo_i], bins=21, range=[0, plot_time * 1.05], 
+            color=cmap_c(colors[explo_i]), alpha=.75, label=labels[explo_i])
 
     ax1.legend(loc="center", bbox_to_anchor=(.5, .25), ncol=3, frameon=False)
     ax2.legend(loc="center", bbox_to_anchor=(.5, .75), ncol=3, frameon=False)
     handles, labels = ax3.get_legend_handles_labels()
-    ax3.legend(handles[::-1], labels[::-1], loc="center", bbox_to_anchor=(.5, .75), ncol=3, frameon=False)
+    ax3.legend(
+        [h for _, h in sorted(zip(ax3_explo_order, handles))], 
+        [l for _, l in sorted(zip(ax3_explo_order, labels))], 
+        loc="center", bbox_to_anchor=(.5, .75), ncol=3, frameon=False
+    )
 
     # plt.savefig(base_folder + folder + "/pub_figure3.pdf")
     return fig
