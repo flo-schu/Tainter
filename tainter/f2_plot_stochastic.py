@@ -94,9 +94,9 @@ def fig2_stochastic_simulations(
         ax[0].annotate(f"$p_{{e}}$ = {explo_}", xy=(0.995, 0.88), xycoords="axes fraction",horizontalalignment="right")
 
         if i == 0:
-            ax[0].set_xlim(0, 3250)
+            ax[0].set_xlim(0, plot_time * 0.65)
         else:
-            ax[0].set_xlim(0, 5000)
+            ax[0].set_xlim(0, plot_time)
 
     plt.setp(ax1.get_xticklabels(), visible=False)
     ax1b.set_xticks([])
