@@ -118,7 +118,7 @@ def fig4_parameter_analysis(
         ax.contour(contour_rho, contour_phi, contour_stlim,
                 levels=np.array([9999]), linestyles="-", colors="black")
         if lab != "$B_1$": ax.yaxis.set_ticklabels([])
-        if lab == "$B_1$": ax.set_ylabel(f"efficiency ($c$)")
+        if lab == "$B_1$": ax.set_ylabel(f"productivity ($c$)")
         if lab == "$B_4$":
             axins = inset_axes(ax,
                             width="8%",  # width = 50% of parent_bbox width
