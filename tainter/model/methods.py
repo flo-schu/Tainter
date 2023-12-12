@@ -80,9 +80,17 @@ def energy_out_capita(a, L, C, elasticity_l, elasticity_c, productivity_c, N):
 def shock(shock_alpha, shock_beta):
     """
     computes the availability based on the beta distributed shocks
+    
+    Parameters
+    ----------
+    alpha = 1
+    beta = 15
+
+    A parameterization like such, ensures that values close to one are rarely
+    drawn, while numbers close to zero have high probability.
     """
 
-    return np.random.beta(shock_beta, shock_alpha)
+    return np.random.beta(a=shock_alpha, b=shock_beta)
 
 def total_energy(history):
     tot_energy = np.sum(history['Energy per capita'])

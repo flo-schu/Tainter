@@ -102,7 +102,7 @@ def tainter(
         A_exp, L_exp, Lc_exp = tm.node_origin(A,L,C,A_2,L_2,Lc_2)
 
         # Environmental Shocks
-        shock = tm.shock(shock_alpha, shock_beta)
+        shock = tm.shock(shock_alpha=shock_alpha, shock_beta=shock_beta)
 
         # this is a more general form of resource reduction which scales
         # with resource access. 

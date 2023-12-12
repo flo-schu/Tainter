@@ -117,8 +117,8 @@ def fig3_stochastic_ensemble_and_macroscopic_approximation(
         phi = elasticity_c,  # efficiency of coordinated Workers
         psi = elasticity_l,
         c = productivity_c,
+        alpha = shock_alpha, # location parameter of beta distribution
         beta = shock_beta,  # scale parameter of beta distribution
-        alpha = shock_alpha  # location parameter of beta distribution
     )
 
 
