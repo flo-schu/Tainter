@@ -2,9 +2,19 @@ import numpy as np
 from scipy import stats
 from scipy.integrate import odeint, trapz
 
-def f_admin(x, t, N, p_e, rho, phi, psi, c, beta, alpha):
+def f_admin(x, t, N, p_e, rho, phi, psi, c, alpha, beta):
     """
-    x is the number of administrators
+    x is the number of administrators.
+
+    Note that the switch: b=alpha and a=beta are is done on purpose. This is no error, 
+    it is motivated in the manuscript:
+    
+    As $1 - B \sim \mathrm{Beta}(\beta, \alpha)$. Hence the probability of 
+    $E/N < \epsilon$ is given by the cumulative probability function of the 
+    Beta distribution, $P = F(N^a \epsilon / e, \beta, \alpha)$.
+
+    I.e. it is necessary to compute the CDF of the Complementary Beta distribution.
+    Therefore a and b are mapped to beta and alpha, respectively
     """
     if x >= N:
         return N
@@ -16,8 +26,8 @@ def f_admin(x, t, N, p_e, rho, phi, psi, c, beta, alpha):
                     ((N - x) * (1 - rho) ** x) ** psi +
                     c * ((N - x) * (1 - (1 - rho) ** x)) ** phi
                 ),
-                b=beta,
-                a=alpha 
+                a=beta, 
+                b=alpha
             )
         )
 
