@@ -15,6 +15,10 @@ def f_admin(x, t, N, p_e, rho, phi, psi, c, alpha, beta):
 
     I.e. it is necessary to compute the CDF of the Complementary Beta distribution.
     Therefore a and b are mapped to beta and alpha, respectively
+
+    Note also that 
+    phi := a
+    psi := b
     """
     if x >= N:
         return N
