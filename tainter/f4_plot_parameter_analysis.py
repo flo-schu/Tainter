@@ -83,7 +83,7 @@ def fig4_parameter_analysis(
 
     # parameters
     plot_pe = npar_1.searchsorted(panel_steps)  # indices of tested pe values
-    labels = {"st": ("$B_1$", "$B_2$", "$B_3$", "$B_4$")}
+    labels = {"st": ("B$_1$", "B$_2$", "B$_3$", "B$_4$")}
 
     # color ranges
     c_st = darr[plot_pe, :, :, colnames == "st"].flatten()
@@ -117,9 +117,9 @@ def fig4_parameter_analysis(
                     aspect="auto")
         ax.contour(contour_rho, contour_phi, contour_stlim,
                 levels=np.array([9999]), linestyles="-", colors="black")
-        if lab != "$B_1$": ax.yaxis.set_ticklabels([])
-        if lab == "$B_1$": ax.set_ylabel(f"productivity ($c$)")
-        if lab == "$B_4$":
+        if lab != "B$_1$": ax.yaxis.set_ticklabels([])
+        if lab == "B$_1$": ax.set_ylabel(f"productivity ($c$)")
+        if lab == "B$_4$":
             axins = inset_axes(ax,
                             width="8%",  # width = 50% of parent_bbox width
                             height="60%",  # height : 5%

@@ -119,10 +119,10 @@ def fig2_stochastic_simulations(
     labels = [alabels[0], elabels[0], alabels[1], alabels[2]]
     ax3.legend(handles, labels, loc="right", ncol=2, frameon=True, fancybox=False)
 
-    ax1.annotate("A", xy=(0.005, 0.88), xycoords="axes fraction")
-    ax1b.annotate("B", xy=(0.94, 0.88), xycoords="axes fraction")
-    ax3.annotate("C", xy=(0.005, 0.88), xycoords="axes fraction")
-    ax5.annotate("D", xy=(0.005, 0.88), xycoords="axes fraction")
+    ax2.annotate("A", xy=(0.005, 0.88), xycoords="axes fraction", zorder=4)
+    ax1b.annotate("B", xy=(0.94, 0.88), xycoords="axes fraction", zorder=4)
+    ax3.annotate("C", xy=(0.005, 0.88), xycoords="axes fraction", zorder=4)
+    ax5.annotate("D", xy=(0.005, 0.88), xycoords="axes fraction", zorder=4)
 
 
     # ------------------------------------------------------------------------------
